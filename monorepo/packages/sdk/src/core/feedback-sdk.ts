@@ -1,7 +1,7 @@
 import type { SDKConfig, FeedbackPayload } from '@repo/shared';
 import { v4 as uuidv4 } from 'uuid';
 
-class FeedbackSDK {
+export class FeedbackSDK {
   private static instance: FeedbackSDK;
   private config: SDKConfig | null = null;
   private userId: string;
@@ -18,6 +18,8 @@ class FeedbackSDK {
   }
 
   private getOrCreateUserId(): string {
+    if (typeof window === 'undefined') return '';
+
     let id = localStorage.getItem('fb_sdk_user_id');
     if (!id) {
       id = uuidv4();
@@ -42,7 +44,7 @@ class FeedbackSDK {
       timestamp: new Date().toISOString(),
       context: {
         userAgent: navigator.userAgent,
-        url: window.location.href
+        url: window.location.href,
       }
     };
 
