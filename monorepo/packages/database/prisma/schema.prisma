@@ -10,6 +10,16 @@ generator client {
   output = "../generated/client"
 }
 
+model Feedback {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  rating    Int
+  comment   String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?

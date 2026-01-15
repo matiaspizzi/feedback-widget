@@ -1,25 +1,24 @@
 import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg'; // Import the Pool
+import { Pool } from 'pg';
 import { PrismaClient } from "../generated/client";
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+// Exportamos el tipo para que otros paquetes puedan referenciarlo explícitamente
+export type { PrismaClient } from "../generated/client";
 
-// 1. Create the Pool specifically for the adapter
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
 const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString
 });
 
-// 2. Pass the pool to the adapter
 const adapter = new PrismaPg(pool);
 
-export const prisma =
+export const prisma: PrismaClient =
   globalForPrisma.prisma ||
   new PrismaClient({
     adapter,
-    // Optional: Log queries to see if connection works
-    // log: ['query', 'info', 'warn', 'error'],
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
