@@ -28,6 +28,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, id: feedback.id }, { status: 201 });
   } catch (error) {
+    console.error('Feedback submission failed:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
