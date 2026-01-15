@@ -1,199 +1,130 @@
-# Turborepo + Prisma ORM starter
+# Feedback Widget System
 
-This is a example designed to help you quickly set up a Turborepo monorepo with a Next.js app and Prisma ORM. This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+A full-stack feedback widget solution featuring a lightweight SDK (Web Component) and a Next.js backend.
 
-## What's inside?
+## 🚀 Getting Started
 
-This turborepo includes the following packages/apps:
+### Prerequisites
 
-### Apps and packages
+- Node.js 18+
+- pnpm (recommended) or npm/yarn
+- PostgreSQL Database (local or remote)
 
-- `web`: a [Next.js](https://nextjs.org/) app
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/database`: [Prisma ORM](https://prisma.io/) to manage & access your database
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Installation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+1.  **Install dependencies:**
 
-### Utilities
+    ```bash
+    pnpm install
+    ```
 
-This turborepo has some additional tools already setup for you:
+2.  **Setup Database:**
+    Copy `.env.example` to `packages/database/.env` and `apps/web/.env` and update `DATABASE_URL`.
+    Then run migrations:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Prisma ORM](https://prisma.io/) for accessing the database
-- [Docker Compose](https://docs.docker.com/compose/) for a local MySQL database
+    ```bash
+    pnpm db:migrate:dev
+    ```
 
-## Getting started
+3.  **Run Development Server:**
+    ```bash
+    pnpm dev
+    ```
 
-Follow these steps to set up and run your Turborepo project with Prisma ORM:
+    - Web App (Backend + Demo): http://localhost:3000
+    - API Health Check: http://localhost:3000/api/health
 
-### 1. Create a Turborepo project
+## 🛠 Usage
 
-Start by creating a new Turborepo project using the following command:
+### Using the SDK via Script Tag (CDN Simulation)
 
-```sh
-npx create-turbo@latest -e with-prisma
+Once built, you can include the script in your HTML:
+
+```html
+<script type="module" src="http://localhost:3000/feedback-sdk.es.js"></script>
+<script>
+  window.onload = () => {
+    FeedbackSDK.init({
+      projectId: "my-project-id",
+      apiKey: "my-secret-key",
+      apiUrl: "http://localhost:3000",
+    });
+  };
+</script>
+<feedback-widget />
 ```
 
-Choose your desired package manager when prompted and a name for the app (e.g., `my-turborepo`). This will scaffold a new Turborepo project with Prisma ORM included and dependencies installed.
+### Using via NPM Import
 
-Navigate to your project directory:
+```typescript
+import "@repo/sdk"; // Registers the web component
+import { FeedbackSDK } from "@repo/sdk";
+
+FeedbackSDK.init({
+  projectId: "123",
+  apiKey: "key",
+  apiUrl: "https://api.example.com",
+});
+
+// Use <feedback-widget /> in your JSX/HTML
+```
+
+## 🧪 Testing
+
+### API Endpoints
+
+You can test the API using `curl` or Postman.
+
+**Health Check:**
 
 ```bash
-cd ./my-turborepo
+curl http://localhost:3000/api/health
+# {"status":"ok"}
 ```
 
-### 2. Setup a local database with Docker Compose
-
-We use [Prisma ORM](https://prisma.io/) to manage and access our database. As such you will need a database for this project, either locally or hosted in the cloud.
-
-To make this process easier, a [`docker-compose.yml` file](./docker-compose.yml) is included to setup a MySQL server locally with a new database named `turborepo`:
-
-Start the MySQL database using Docker Compose:
-
-```sh
-docker-compose up -d
-```
-
-To change the default database name, update the `MYSQL_DATABASE` environment variable in the [`docker-compose.yml` file](/docker-compose.yml).
-
-### 3. Setup environment variables
-
-Once the database is ready, copy the `.env.example` file to the [`/packages/database`](./packages/database/) and [`/apps/web`](./apps/web/) directories as `.env`:
+**Submit Feedback:**
 
 ```bash
-cp .env.example ./packages/database/.env
-cp .env.example ./apps/web/.env
+curl -X POST http://localhost:3000/api/feedback \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer FEEDBACK_API_KEY" \
+  -d '{
+    "projectId": "test-project",
+    "userId": "user-123",
+    "rating": 5,
+    "comment": "Great widget!"
+  }'
 ```
 
-This ensures Prisma has access to the `DATABASE_URL` environment variable, which is required to connect to your database.
+---
 
-If you added a custom database name, or use a cloud based database, you will need to update the `DATABASE_URL` in your `.env` accordingly.
+## 🏗 Architecture Decision Record (ADR-001)
 
-### 4. Migrate your database
+**Status:** Accepted  
+**Date:** 2026-01-15
 
-Once your database is running, you’ll need to create and apply migrations to set up the necessary tables. Run the database migration command:
+### Context
 
-```bash
-# Using npm
-npm run db:migrate:dev
-```
+The goal is to provide an embeddable feedback widget and an API to collect data. Key requirements include ease of integration, robust validation, and superior DX. Data persistence and user identity management are required.
 
-<details>
+### Decisions
 
-<summary>Expand for <code>yarn</code>, <code>pnpm</code> or <code>bun</code></summary>
+#### 1. Monorepo with Turborepo & pnpm
 
-```bash
-# Using yarn
-yarn run db:migrate:dev
+**Justification:** Allows orchestration of multiple packages (SDK, API, DB) in a single repository. Facilitates sharing of types and ESLint/TS configurations, ensuring consistency and reducing code duplication (DRY).
 
-# Using pnpm
-pnpm run db:migrate:dev
+#### 2. SDK: Vite (Library Mode) + Web Components
 
-# Using bun
-bun run db:migrate:dev
-```
+**Justification:** We need an agnostic and lightweight bundle that works on any web. Vite offers an optimized build. We use **Web Components with Shadow DOM** to encapsulate CSS styles, ensuring the widget is not affected by (nor affects) the host site's styles ("bulletproof style isolation").
 
-</details>
+#### 3. Backend: Next.js API Routes
 
-You’ll be prompted to name the migration. Once you provide a name, Prisma will create and apply the migration to your database.
+**Justification:** Simplifies infrastructure by combining the backend and the demo page into a single deployable unit. Leverages Next.js server optimizations and facilitates type validation with TypeScript.
 
-> Note: The `db:migrate:dev` script (located in [packages/database/package.json](/packages/database/package.json)) uses [Prisma Migrate](https://www.prisma.io/migrate) under the hood.
+#### 4. Database: PostgreSQL + Prisma
 
-For production environments, always push schema changes to your database using the [`prisma migrate deploy` command](https://www.prisma.io/docs/orm/prisma-client/deployment/deploy-database-changes-with-prisma-migrate). You can find an example `db:migrate:deploy` script in the [`package.json` file](/packages/database/package.json) of the `database` package.
+**Justification:** Uses robust relational database storage. Prisma offers type-safety in database queries, aligning with our strict TypeScript practices. _Note: Original plan considered SQLite, but PostgreSQL was retained for robustness._
 
-### 5. Seed your database
+#### 5. Data Contract: Zod (Shared Package)
 
-To populate your database with initial or fake data, use [Prisma's seeding functionality](https://www.prisma.io/docs/guides/database/seed-database).
-
-Update the seed script located at [`packages/database/src/seed.ts`](/packages/database/src/seed.ts) to include any additional data that you want to seed. Once edited, run the seed command:
-
-```bash
-# Using npm
-npm run db:seed
-```
-
-<details>
-
-<summary>Expand for <code>yarn</code>, <code>pnpm</code> or <code>bun</code></summary>
-
-```bash
-# Using yarn
-yarn run db:seed
-
-# Using pnpm
-pnpm run db:seed
-
-# Using bun
-bun run db:seed
-```
-
-</details>
-
-### 6. Build your application
-
-To build all apps and packages in the monorepo, run:
-
-```bash
-# Using npm
-npm run build
-```
-
-<details>
-
-<summary>Expand for <code>yarn</code>, <code>pnpm</code> or <code>bun</code></summary>
-
-```bash
-# Using yarn
-yarn run build
-
-# Using pnpm
-pnpm run build
-
-# Using bun
-bun run build
-```
-
-</details>
-
-### 7. Start the application
-
-Finally, start your application with:
-
-```bash
-yarn run dev
-```
-
-<details>
-
-<summary>Expand for <code>yarn</code>, <code>pnpm</code> or <code>bun</code></summary>
-
-```bash
-# Using yarn
-yarn run dev
-
-# Using pnpm
-pnpm run dev
-
-# Using bun
-bun run dev
-```
-
-</details>
-
-Your app will be running at `http://localhost:3000`. Open it in your browser to see it in action!
-
-You can also read the official [detailed step-by-step guide from Prisma ORM](https://pris.ly/guide/turborepo?utm_campaign=turborepo-example) to build a project from scratch using Turborepo and Prisma ORM.
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+**Justification:** Validation schemas are defined in a shared package. This ensures that both Frontend (SDK) and Backend validate against the same source of truth, rejecting invalid payloads on both client and server.
