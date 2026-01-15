@@ -1,5 +1,9 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  "globalEnv": [
+    "DATABASE_URL",
+    "FEEDBACK_API_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [
@@ -13,6 +17,10 @@
         "dist/**",
         ".next/**",
         "!.next/cache/**"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "FEEDBACK_API_KEY"
       ]
     },
     "db:migrate:dev": {
