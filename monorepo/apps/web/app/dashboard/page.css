@@ -1,8 +1,8 @@
 .dashboard-page {
   min-height: 100vh;
   padding: 2rem;
-  background: radial-gradient(circle at top left, #1a1a1a 0%, #000000 100%);
-  color: #fff;
+  background: radial-gradient(circle at top left, #1e293b, #0f172a);
+  color: var(--text);
   font-family: Inter, system-ui, sans-serif;
 }
 

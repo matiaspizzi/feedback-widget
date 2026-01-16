@@ -6,13 +6,12 @@
   padding: 1rem;
 }
 
-
 .api-key-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
   font-size: 0.875rem;
   outline: none;
   transition: all 0.2s;
@@ -25,8 +24,8 @@
 }
 
 .api-key-input:focus {
-  border-color: rgba(0, 112, 243, 0.5);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
 }
 
 .api-key-create-btn {
@@ -52,6 +51,6 @@
 
 .api-key-error {
   margin-left: 1rem;
-  color: #ff4444;
+  color: #ff4d4f;
   font-size: 0.875rem;
 }

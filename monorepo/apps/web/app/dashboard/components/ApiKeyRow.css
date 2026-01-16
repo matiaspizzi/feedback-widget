@@ -1,5 +1,5 @@
 .api-key-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
 }
 
 .api-key-cell {
@@ -21,7 +21,7 @@
 }
 
 .api-key-expiry {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-muted);
 }
 
 .api-key-value-cell {
@@ -41,13 +41,13 @@
 }
 
 .api-key-value-hidden {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
 }
 
 .api-key-copy-btn {
   padding: 0.25rem 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
   color: #fff;
   font-size: 0.75rem;
   cursor: pointer;
@@ -64,8 +64,8 @@
 }
 
 .api-key-menu-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
   color: #fff;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
@@ -83,8 +83,8 @@
   right: 20px;
   top: 85%;
   margin-top: 0;
-  background: rgba(30, 30, 30, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1e293b;
+  border: 1px solid var(--border);
   z-index: 1000;
   padding: 0.5rem;
   min-width: 120px;
@@ -96,7 +96,7 @@
   padding: 0.5rem 0.75rem;
   background: transparent;
   border: none;
-  color: #ff4444;
+  color: #ff4d4f;
   font-size: 0.875rem;
   cursor: pointer;
   text-align: left;
@@ -104,5 +104,5 @@
 }
 
 .api-key-revoke-btn:hover {
-  background: rgba(255, 68, 68, 0.1);
+  background: rgba(255, 77, 79, 0.1);
 }

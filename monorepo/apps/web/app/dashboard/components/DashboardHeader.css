@@ -4,20 +4,19 @@
   align-items: center;
   margin-bottom: 3rem;
   padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); /* changed to border-bottom usually for headers, but original was border: 1px solid. Let's keep original if it's a floating card or full width */
+  border: 1px solid var(--border);
 }
 
 .dashboard-title {
-  font-size: 1.5rem;
-  margin: 0;
+  font-size: 1.875rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.dashboard-title-highlight {
-  color: var(--primary, #0070f3);
+  text-align: center;
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .dashboard-home-link {
@@ -25,10 +24,12 @@
   text-decoration: none;
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--input-bg);
   transition: all 0.2s;
+  border: 1px solid var(--border);
 }
 
 .dashboard-home-link:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--primary);
+  border-color: var(--primary);
 }
