@@ -37,7 +37,10 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "FEEDBACK_API_KEY"
+      ]
     },
     "generate": {
       "dependsOn": [
