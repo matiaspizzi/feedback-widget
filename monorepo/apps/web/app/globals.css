@@ -33,6 +33,23 @@ body {
     sans-serif;
 }
 
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.field-error {
+  color: #ff4d4f;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+}
+
 .auth-container {
   display: flex;
   justify-content: center;
@@ -48,7 +65,6 @@ body {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-  border-radius: 1.5rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.5s ease-out;
 }
@@ -103,7 +119,6 @@ body {
   padding: 0.75rem 1rem;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
   color: var(--text);
   font-size: 1rem;
   transition: all 0.2s;
@@ -121,7 +136,6 @@ body {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
