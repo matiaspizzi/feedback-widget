@@ -71,3 +71,15 @@ model ApiKey {
   @@index([userId])
   @@unique([userId, name])
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String?
+  rating    Int
+  comment   String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
+
+// se podria hacer una tabla de proyectos que se relacione con feedback y user pero ya es demasiado por ahora
