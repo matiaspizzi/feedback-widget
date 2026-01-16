@@ -1,0 +1,50 @@
+.api-key-form-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.api-key-form-cell {
+  padding: 1rem;
+}
+
+.api-key-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.api-key-input:focus {
+  border-color: rgba(0, 112, 243, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.api-key-create-btn {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #0070f3 0%, #00a1ff 100%);
+  border: none;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.api-key-create-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3);
+}
+
+.api-key-create-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.api-key-error {
+  margin-left: 1rem;
+  color: #ff4444;
+  font-size: 0.875rem;
+}

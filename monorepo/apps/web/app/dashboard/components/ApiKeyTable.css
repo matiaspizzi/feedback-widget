@@ -1,0 +1,35 @@
+.api-key-table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: visible;
+}
+
+.api-key-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.api-key-table-header {
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.api-key-table-th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.api-key-table-th-actions {
+  text-align: center;
+  width: 80px;
+}
+
+.api-key-table-empty {
+  padding: 3rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.875rem;
+}

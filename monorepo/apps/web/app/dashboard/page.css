@@ -1,0 +1,12 @@
+.dashboard-page {
+  min-height: 100vh;
+  padding: 2rem;
+  background: radial-gradient(circle at top left, #1a1a1a 0%, #000000 100%);
+  color: #fff;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.dashboard-main {
+  max-width: 1200px;
+  margin: 0 auto;
+}

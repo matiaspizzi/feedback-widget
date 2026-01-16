@@ -15,18 +15,18 @@ export const feedbackSchema = z.object({
 export type FeedbackPayload = z.infer<typeof feedbackSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(1, "La contraseña es obligatoria"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
   name: z.string()
-    .min(1, "El nombre es obligatorio")
-    .regex(/^[a-zA-Z.]+$/, "El nombre solo puede contener letras y puntos")
+    .min(1, "Name is required")
+    .regex(/^[a-zA-Z.]+$/, "Name can only contain letters and dots")
     .optional(),
 });
 
@@ -38,3 +38,10 @@ export interface SDKConfig {
   apiUrl: string;
   debug?: boolean;
 }
+
+export const apiKeySchema = z.object({
+  name: z.string().min(1, "Name is required").max(20, "Name must be at most 20 characters long"),
+  expiresAt: z.iso.datetime().optional().nullable(),
+});
+
+export type ApiKeyInput = z.infer<typeof apiKeySchema>;

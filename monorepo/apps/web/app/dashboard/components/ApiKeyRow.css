@@ -1,0 +1,95 @@
+.api-key-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.api-key-cell {
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+.api-key-expiry {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.api-key-value-cell {
+  font-family: monospace;
+}
+
+.api-key-value-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.api-key-value-visible {
+  background: rgba(0, 255, 0, 0.1);
+  padding: 0.25rem 0.5rem;
+  color: #00ff00;
+}
+
+.api-key-value-hidden {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.api-key-copy-btn {
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.api-key-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.api-key-actions-cell {
+  text-align: center;
+  position: relative;
+}
+
+.api-key-menu-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.api-key-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.api-key-menu {
+  position: absolute;
+  right: 1rem;
+  top: 100%;
+  margin-top: 0.25rem;
+  background: rgba(30, 30, 30, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  padding: 0.5rem;
+  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.api-key-revoke-btn {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: #ff4444;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.api-key-revoke-btn:hover {
+  background: rgba(255, 68, 68, 0.1);
+}
