@@ -1,5 +1,9 @@
-import { signIn } from "@/auth"
-import { register } from "@/app/actions/auth"
+"use client"
+
+import { useFormState } from "react-dom"
+import { loginAction, registerAction } from "@/app/actions/auth"
+import Link from "next/link"
+import { AuthState } from "../actions/types"
 
 interface SignInProps {
   mode: "login" | "register"
@@ -8,27 +12,24 @@ interface SignInProps {
 export function SignIn({ mode }: SignInProps) {
   const isLogin = mode === "login"
 
+  const [state, formAction] = useFormState(
+    (s: AuthState | null | undefined, f: FormData) => isLogin ? loginAction(s, f) : registerAction(s, f),
+    null
+  )
+
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">{isLogin ? "Welcome Back" : "Create Account"}</h1>
+        <h1 className="auth-title">
+          {isLogin ? "Welcome Back" : "Create Account"}
+        </h1>
         <p className="auth-subtitle">
           {isLogin
             ? "Enter your credentials to access your account"
             : "Sign up to start collecting feedback today"}
         </p>
 
-        <form
-          className="auth-form"
-          action={async (formData) => {
-            "use server"
-            if (isLogin) {
-              await signIn("credentials", formData)
-            } else {
-              await register(formData)
-            }
-          }}
-        >
+        <form className="auth-form" action={formAction}>
           {!isLogin && (
             <div className="form-group">
               <label htmlFor="name">Name</label>
@@ -37,8 +38,10 @@ export function SignIn({ mode }: SignInProps) {
                 name="name"
                 type="text"
                 placeholder="John Doe"
-                required
               />
+              {state?.errors?.name && (
+                <p className="field-error">{state.errors.name[0]}</p>
+              )}
             </div>
           )}
           <div className="form-group">
@@ -48,8 +51,10 @@ export function SignIn({ mode }: SignInProps) {
               name="email"
               type="email"
               placeholder="you@example.com"
-              required
             />
+            {state?.errors?.email && (
+              <p className="field-error">{state.errors.email[0]}</p>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
@@ -58,9 +63,17 @@ export function SignIn({ mode }: SignInProps) {
               name="password"
               type="password"
               placeholder="••••••••"
-              required
             />
+            {state?.errors?.password && (
+              <p className="field-error">{state.errors.password[0]}</p>
+            )}
           </div>
+
+          {state?.message && (
+            <div className="error-message">
+              {state.message}
+            </div>
+          )}
 
           <button type="submit" className="auth-button">
             {isLogin ? "Sign In" : "Get Started"}
@@ -70,11 +83,11 @@ export function SignIn({ mode }: SignInProps) {
         <div className="auth-footer">
           {isLogin ? (
             <p>
-              Don&apos;t have an account? <a href="/register">Create one</a>
+              Don&apos;t have an account? <Link href="/register">Create one</Link>
             </p>
           ) : (
             <p>
-              Already have an account? <a href="/login">Sign in</a>
+              Already have an account? <Link href="/login">Sign in</Link>
             </p>
           )}
         </div>
@@ -82,4 +95,3 @@ export function SignIn({ mode }: SignInProps) {
     </div>
   )
 }
-

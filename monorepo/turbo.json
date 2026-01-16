@@ -26,6 +26,9 @@
     "db:migrate:dev": {
       "cache": false
     },
+    "db:migrate:reset": {
+      "cache": false
+    },
     "db:migrate:deploy": {
       "cache": false
     },
