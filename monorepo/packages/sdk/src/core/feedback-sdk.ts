@@ -53,7 +53,7 @@ export class FeedbackSDK {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`
+          'x-api-key': this.config.apiKey
         },
         body: JSON.stringify(payload),
       });
