@@ -5,8 +5,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@lib/*": ["./lib/*"],
+      "@actions/*": ["./actions/*"],
+      "@repositories/*": ["./repositories/*"],
+      "@services/*": ["./services/*"],
+      // repo packages
       "@repo/sdk": ["../../packages/sdk/src/index.ts"],
-      "@repo/shared": ["../../packages/shared/src/index.ts"]
+      "@repo/shared": ["../../packages/shared/src/index.ts"],
+      "@repo/database": ["../../packages/database/src/index.ts"]
     }
   },
   "include": [

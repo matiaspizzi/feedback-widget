@@ -1,12 +1,12 @@
 "use server"
 
-import { prisma } from "@repo/database"
 import { saltAndHashPassword } from "@/lib/password"
 import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { loginSchema, registerSchema } from "@repo/shared"
 import { AuthState } from "./types"
+import { UserService } from "@/services/user-service"
 
 export async function loginAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)
@@ -26,10 +26,8 @@ export async function loginAction(prevState: AuthState | null | undefined, formD
     })
   } catch (error) {
     if (error instanceof AuthError) {
-      return { message: "Email o contraseña incorrectos." }
+      return { message: "Invalid email or password" }
     }
-    // IMPORTANTE: Next.js usa errores para redireccionar. 
-    // Si no relanzas el error, el redirect no funcionará.
     throw error
   }
 }
@@ -48,16 +46,19 @@ export async function registerAction(prevState: AuthState | null | undefined, fo
 
   try {
     const hashedPassword = await saltAndHashPassword(password)
-    await prisma.user.create({
-      data: { email, password: hashedPassword, name: name || null },
+    const userService = new UserService()
+
+    await userService.createUser({
+      email,
+      password: hashedPassword,
+      name: name || null,
     })
   } catch (error: any) {
-    if (error.code === 'P2002') {
-      return { message: "El email ya está registrado." }
+    if (error.message === "User with this email already exists") {
+      return { message: "Email already exists" }
     }
-    return { message: "Error al crear la cuenta." }
+    return { message: "Error creating account" }
   }
 
-  // Redirigimos al login tras el registro exitoso
   redirect("/login")
 }
