@@ -55,7 +55,6 @@ export function ApiKeyRow({ apiKey, isJustCreated, onRevoke }: ApiKeyRowProps) {
         <button
           onClick={() => {
             setOpenMenu(!openMenu)
-            console.log("openMenu", openMenu)
           }}
           className="api-key-menu-btn"
         >

@@ -56,8 +56,6 @@ export function ApiKeyTable() {
     const newKey = await response.json()
     setJustCreatedKey(newKey.value)
     setApiKeys([newKey, ...apiKeys])
-
-    setTimeout(() => setJustCreatedKey(null), 30000)
   }
 
   const handleRevokeKey = async (id: string) => {

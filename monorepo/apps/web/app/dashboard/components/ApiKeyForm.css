@@ -6,6 +6,7 @@
   padding: 1rem;
 }
 
+
 .api-key-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -15,6 +16,12 @@
   font-size: 0.875rem;
   outline: none;
   transition: all 0.2s;
+  color-scheme: dark;
+}
+
+.api-key-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 .api-key-input:focus {

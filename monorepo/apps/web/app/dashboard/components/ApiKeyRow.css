@@ -7,6 +7,19 @@
   font-size: 0.875rem;
 }
 
+.api-key-cell:nth-child(1) {
+  max-width: 200px;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.api-key-cell:nth-child(2) {
+  max-width: 200px;
+  width: 200px;
+}
+
 .api-key-expiry {
   color: rgba(255, 255, 255, 0.6);
 }
@@ -67,9 +80,9 @@
 
 .api-key-menu {
   position: absolute;
-  right: 1rem;
-  top: 100%;
-  margin-top: 0.25rem;
+  right: 20px;
+  top: 85%;
+  margin-top: 0;
   background: rgba(30, 30, 30, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;

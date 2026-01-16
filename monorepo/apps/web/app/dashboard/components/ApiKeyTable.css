@@ -22,6 +22,16 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.api-key-table-th:nth-child(1) {
+  max-width: 400px;
+  width: 400px;
+}
+
+.api-key-table-th:nth-child(2) {
+  max-width: 300px;
+  width: 300px;
+}
+
 .api-key-table-th-actions {
   text-align: center;
   width: 80px;
