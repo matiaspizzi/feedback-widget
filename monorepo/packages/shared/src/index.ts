@@ -41,7 +41,10 @@ export interface SDKConfig {
 
 export const apiKeySchema = z.object({
   name: z.string().min(1, "Name is required").max(20, "Name must be at most 20 characters long"),
-  expiresAt: z.iso.datetime().optional().nullable(),
+  expiresAt: z.iso.datetime().optional().nullable().refine((val) => {
+    if (!val) return true;
+    return new Date(val) > new Date();
+  }, "Expiration date must be in the future"),
 });
 
 export type ApiKeyInput = z.infer<typeof apiKeySchema>;

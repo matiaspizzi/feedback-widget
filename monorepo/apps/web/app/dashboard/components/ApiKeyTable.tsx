@@ -50,7 +50,8 @@ export function ApiKeyTable() {
     })
 
     if (!response.ok) {
-      throw new Error("Failed to create API key")
+      const errorText = await response.text()
+      throw new Error(errorText || "Failed to create API key")
     }
 
     const newKey = await response.json()

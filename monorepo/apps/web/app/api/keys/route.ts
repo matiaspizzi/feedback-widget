@@ -24,7 +24,8 @@ export async function POST(req: Request) {
     const validatedFields = apiKeySchema.safeParse(body);
 
     if (!validatedFields.success) {
-      return new NextResponse("Datos inválidos", { status: 400 });
+      const errorMessage = validatedFields.error.issues?.[0]?.message || "Invalid fields";
+      return new NextResponse(errorMessage, { status: 400 });
     }
 
     const { name, expiresAt } = validatedFields.data;
@@ -41,9 +42,12 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(apiKey);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return new NextResponse("An API key with this name already exists", { status: 409 });
+    }
     console.error("[API_KEYS_POST]", error);
-    return new NextResponse("Error Interno del Servidor", { status: 500 });
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 

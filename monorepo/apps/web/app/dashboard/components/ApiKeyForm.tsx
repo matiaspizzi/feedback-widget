@@ -28,8 +28,8 @@ export function ApiKeyForm({ onCreateKey }: ApiKeyFormProps) {
       await onCreateKey(newKeyName, newKeyExpiry || null)
       setNewKeyName("")
       setNewKeyExpiry("")
-    } catch (err) {
-      setError("Failed to create API key")
+    } catch (err: any) {
+      setError(err.message || "Failed to create API key")
     } finally {
       setIsCreating(false)
     }

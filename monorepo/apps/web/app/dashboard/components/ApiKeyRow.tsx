@@ -32,7 +32,7 @@ export function ApiKeyRow({ apiKey, isJustCreated, onRevoke }: ApiKeyRowProps) {
     <tr className="api-key-row">
       <td className="api-key-cell">{apiKey.name}</td>
       <td className="api-key-cell api-key-expiry">
-        {apiKey.expiresAt ? new Date(apiKey.expiresAt).toLocaleDateString() : 'Never'}
+        {apiKey.expiresAt ? new Date(apiKey.expiresAt).toLocaleString() : 'Never'}
       </td>
       <td className="api-key-cell api-key-value-cell">
         {isJustCreated ? (
