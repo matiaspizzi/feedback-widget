@@ -1,22 +1,18 @@
 import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import pg from 'pg';
 import { PrismaClient } from "../generated/client";
-
-// Exportamos el tipo para que otros paquetes puedan referenciarlo explícitamente
-export type { PrismaClient } from "../generated/client";
-
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 const connectionString = process.env.DATABASE_URL;
 
-const pool = new Pool({
-  connectionString
-});
-
+const pool = new pg.Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
-export const prisma: PrismaClient =
-  globalForPrisma.prisma ||
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma =
+  globalForPrisma.prisma ??
   new PrismaClient({
     adapter,
   });
