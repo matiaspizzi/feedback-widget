@@ -15,13 +15,22 @@ export default async function IndexPage() {
             <p style={{ marginBottom: '1.5rem' }}>
               Welcome back, <strong>{session.user?.name || session.user?.email}</strong>!
             </p>
+            <Link href="/dashboard" className="auth-button" style={{
+              textDecoration: 'none',
+              textAlign: 'center',
+              display: 'block',
+              marginBottom: '1rem',
+              background: 'linear-gradient(135deg, #0070f3 0%, #00a1ff 100%)'
+            }}>
+              Go to Dashboard
+            </Link>
             <form
               action={async () => {
                 "use server"
                 await signOut()
               }}
             >
-              <button type="submit" className="auth-button" style={{ width: '100%' }}>
+              <button type="submit" className="auth-button" style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)' }}>
                 Logout
               </button>
             </form>
