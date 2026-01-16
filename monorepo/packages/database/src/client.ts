@@ -1,6 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
-import { PrismaClient } from "../generated/client";
+import { PrismaClient } from "./generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -19,4 +19,4 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export * from "../generated/client";
+export * from "./generated/prisma/client";
