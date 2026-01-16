@@ -1,36 +1,42 @@
-'use client'
-import '@repo/sdk'
-import { FeedbackSDK } from '@repo/sdk'
+import { auth, signOut } from "@/auth"
+import Link from "next/link"
 
-export default function DemoPage() {
-
-    FeedbackSDK.init({
-      projectId: 'demo-project-id',
-      apiKey: process.env.NEXT_PUBLIC_FEEDBACK_API_KEY || 'demo-api-key',
-      apiUrl: 'http://localhost:3000',
-      debug: true
-    })
+export default async function IndexPage() {
+  const session = await auth()
 
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: '800px', margin: '0 auto', padding: '40px' }}>
-      <h1>Feedback Widget Demo</h1>
-      <p>
-        Esta página demuestra la integración del Feedback Widget.
-        El widget debería aparecer como un botón flotante en la esquina inferior derecha.
-      </p>
+    <div className="auth-container">
+      <div className="auth-card" style={{ textAlign: 'center' }}>
+        <h1 className="auth-title">Feedback Widget</h1>
+        <p className="auth-subtitle">Collect and manage user feedback with ease</p>
 
-      <div style={{ padding: '20px', background: '#f3f4f6', borderRadius: '8px', marginTop: '20px' }}>
-        <h2>Instrucciones</h2>
-        <ol>
-          <li>Haz clic en el icono de chat (💬) abajo a la derecha.</li>
-          <li>Selecciona una calificación (estrellas).</li>
-          <li>Escribe un comentario opcional.</li>
-          <li>Envía el feedback.</li>
-        </ol>
+        {session ? (
+          <div style={{ marginTop: '2rem' }}>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Welcome back, <strong>{session.user?.name || session.user?.email}</strong>!
+            </p>
+            <form
+              action={async () => {
+                "use server"
+                await signOut()
+              }}
+            >
+              <button type="submit" className="auth-button" style={{ width: '100%' }}>
+                Logout
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <Link href="/login" className="auth-button" style={{ textDecoration: 'none', textAlign: 'center' }}>
+              Sign In
+            </Link>
+            <Link href="/register" className="auth-button" style={{ background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', textDecoration: 'none', textAlign: 'center' }}>
+              Create Account
+            </Link>
+          </div>
+        )}
       </div>
-
-      <feedback-widget />
     </div>
   )
 }
-
