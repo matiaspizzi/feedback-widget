@@ -8,12 +8,14 @@
     "build": "turbo run build",
     "db:migrate:deploy": "turbo run db:migrate:deploy",
     "db:migrate:dev": "turbo run db:migrate:dev",
+    "db:migrate:reset": "turbo run db:migrate:reset",
     "db:push": "turbo run db:push",
     "db:seed": "turbo run db:seed",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "turbo run generate",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "setup": "pnpm install && pnpm turbo run db:generate && pnpm db:migrate:reset"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
