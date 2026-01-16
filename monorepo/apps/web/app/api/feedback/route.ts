@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server';
-import { feedbackSchema } from '@repo/shared'; 
+import { feedbackSchema } from '@repo/shared';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.FEEDBACK_API_KEY}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await req.json();
     const result = feedbackSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: result.error.format() }, { status: 400 });
+      return NextResponse.json({
+        error: 'Invalid payload',
+        details: result.error.format()
+      }, { status: 400 });
     }
 
     const feedback = await prisma.feedback.create({
@@ -28,7 +26,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, id: feedback.id }, { status: 201 });
   } catch (error) {
-    console.error('Feedback submission failed:', error);
+    console.error('[DATABASE_ERROR]:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
