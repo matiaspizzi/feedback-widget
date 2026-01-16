@@ -96,6 +96,7 @@ export class FeedbackWidget extends HTMLElement {
   private setupEventListeners() {
     if (!this.shadow) return;
     this.shadow.querySelector('.fab')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       this.toggleModal();
     });
 
