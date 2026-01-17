@@ -1,10 +1,9 @@
 import 'dotenv/config';
-import { prisma } from "./client";
+import { db } from "./client";
 
 import type { User } from "../generated/client";
 
 const DEFAULT_USERS = [
-  // Add your own user to pre-populate the database with
   {
     name: "Tim Apple",
     email: "tim@apple.com",
@@ -15,7 +14,7 @@ const DEFAULT_USERS = [
   try {
     await Promise.all(
       DEFAULT_USERS.map((user) =>
-        prisma.user.upsert({
+        db.user.upsert({
           where: {
             email: user.email!,
           },
@@ -32,6 +31,6 @@ const DEFAULT_USERS = [
     console.error(error);
     process.exit(1);
   } finally {
-    await prisma.$disconnect();
+    await db.$disconnect();
   }
 })();
