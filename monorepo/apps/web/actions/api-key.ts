@@ -28,8 +28,11 @@ export async function createApiKeyAction(data: { name: string; expiresAt: string
       success: true,
       data: { value: result.value }
     };
-  } catch (error) {
-    console.error("Action Error:", error);
+  } catch (error: any) {
+    if (error.message === "The expiration date cannot be in the past.") {
+      return { success: false, error: error.message };
+    }
+    console.error("[CREATE_API_KEY_FATAL]:", error);
     const errorMessage = error instanceof Error ? error.message : "Failed to create key";
     return { success: false, error: errorMessage };
   }
@@ -48,8 +51,11 @@ export async function deleteApiKeyAction(id: string) {
     revalidatePath("/dashboard");
 
     return { success: true };
-  } catch (error) {
-    console.error("Action Error:", error);
+  } catch (error: any) {
+    if (error.message === "API Key not found") {
+      return { success: false, error: error.message };
+    }
+    console.error("[DELETE_API_KEY_FATAL]:", error);
     return { success: false, error: "Failed to delete key" };
   }
 }
