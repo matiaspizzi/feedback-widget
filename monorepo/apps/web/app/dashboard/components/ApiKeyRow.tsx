@@ -11,16 +11,11 @@ interface ApiKeyRowProps {
     createdAt: string
     expiresAt: string | null
   }
-  isJustCreated: boolean
   onRevoke: (id: string) => void
 }
 
-export function ApiKeyRow({ apiKey, isJustCreated, onRevoke }: ApiKeyRowProps) {
+export function ApiKeyRow({ apiKey, onRevoke }: ApiKeyRowProps) {
   const [openMenu, setOpenMenu] = useState(false)
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-  }
 
   const handleRevoke = () => {
     if (confirm("Are you sure you want to revoke this API key?")) {
@@ -35,21 +30,7 @@ export function ApiKeyRow({ apiKey, isJustCreated, onRevoke }: ApiKeyRowProps) {
         {apiKey.expiresAt ? new Date(apiKey.expiresAt).toLocaleString() : 'Never'}
       </td>
       <td className="api-key-cell api-key-value-cell">
-        {isJustCreated ? (
-          <div className="api-key-value-container">
-            <code className="api-key-value-visible">
-              {apiKey.value}
-            </code>
-            <button
-              onClick={() => copyToClipboard(apiKey.value)}
-              className="api-key-copy-btn"
-            >
-              Copy
-            </button>
-          </div>
-        ) : (
-          <span className="api-key-value-hidden">••••••••••••••••</span>
-        )}
+
       </td>
       <td className="api-key-cell api-key-actions-cell">
         <button

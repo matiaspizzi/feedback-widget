@@ -1,8 +1,8 @@
 .api-key-table-container {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  overflow: visible;
+  border: 1px solid var(--border); /* Añadido para suavizar bordes */
+  overflow: hidden;
 }
 
 .api-key-table {
@@ -23,19 +23,44 @@
   color: var(--text-muted);
 }
 
-.api-key-table-th:nth-child(1) {
-  max-width: 400px;
-  width: 400px;
+.api-key-table-th:nth-child(1) { width: 300px; }
+.api-key-table-th:nth-child(2) { width: 200px; }
+.api-key-table-th:nth-child(3) { width: 200px; }
+.api-key-table-th:nth-child(4) { width: 400px; }
+.api-key-table-th:nth-child(5) { width: 100px; }
+
+.api-key-td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-main);
 }
 
-.api-key-table-th:nth-child(2) {
-  max-width: 300px;
-  width: 300px;
+.api-key-row:last-child .api-key-td {
+  border-bottom: none;
 }
 
-.api-key-table-th-actions {
-  text-align: center;
-  width: 80px;
+.api-key-masked {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 8px;
+  font-family: 'JetBrains Mono', monospace; /* O cualquier mono */
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.btn-revoke {
+  color: #ff4d4d;
+  background: transparent;
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.btn-revoke:hover {
+  background: #ff4d4d;
+  color: white;
 }
 
 .api-key-table-empty {

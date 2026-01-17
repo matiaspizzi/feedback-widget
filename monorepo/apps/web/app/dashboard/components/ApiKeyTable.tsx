@@ -1,8 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { ApiKeyForm } from "./ApiKeyForm"
-import { ApiKeyRow } from "./ApiKeyRow"
+import { useMemo } from "react"
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table"
+import { deleteApiKeyAction } from "@actions/api-key"
 import "./ApiKeyTable.css"
 
 interface ApiKey {
@@ -13,94 +18,93 @@ interface ApiKey {
   expiresAt: string | null
 }
 
-export function ApiKeyTable() {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
-  const [justCreatedKey, setJustCreatedKey] = useState<string | null>(null)
+const columnHelper = createColumnHelper<ApiKey>()
 
-  useEffect(() => {
-    fetchApiKeys()
-  }, [])
+export function ApiKeyTable({ apiKeys }: { apiKeys: ApiKey[] }) {
 
-  const fetchApiKeys = async () => {
-    try {
-      const response = await fetch("/api/keys")
-      if (response.ok) {
-        const data = await response.json()
-        setApiKeys(data)
-      }
-    } catch (err) {
-      console.error("Failed to fetch API keys:", err)
-    }
+  const handleRevoke = async (id: string) => {
+    if (!confirm("Are you sure you want to revoke this key?")) return
+    const result = await deleteApiKeyAction(id)
+    if (!result.success) alert(result.error)
   }
 
-  const handleCreateKey = async (name: string, expiresAt: string | null) => {
-    let formattedExpiresAt: string | null = null
+  const columns = useMemo(() => [
+    columnHelper.accessor("name", {
+      header: "Name",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("createdAt", {
+      header: "Created At",
+      cell: (info) => {
+        const val = info.getValue()
+        return val ? new Date(val).toLocaleString() : "Never"
+      },
+    }),
+    columnHelper.accessor("expiresAt", {
+      header: "Expires At",
+      cell: (info) => {
+        const val = info.getValue()
+        return val ? new Date(val).toLocaleString() : "Never"
+      },
+    }),
+    columnHelper.accessor("value", {
+      header: "Key",
+      cell: (info) => (
+        <code className="api-key-masked">
+          {`••••••••••••••••••••••••${info.getValue().slice(-4)}`}
+        </code>
+      ),
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: "",
+      cell: (info) => (
+        <button
+          onClick={() => handleRevoke(info.row.original.id)}
+          className="btn-revoke"
+        >
+          Revoke
+        </button>
+      ),
+    }),
+  ], [])
 
-    if (expiresAt) {
-      formattedExpiresAt = new Date(expiresAt).toISOString()
-    }
-
-    const response = await fetch("/api/keys", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        expiresAt: formattedExpiresAt,
-      }),
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(errorText || "Failed to create API key")
-    }
-
-    const newKey = await response.json()
-    setJustCreatedKey(newKey.value)
-    setApiKeys([newKey, ...apiKeys])
-  }
-
-  const handleRevokeKey = async (id: string) => {
-    try {
-      const response = await fetch(`/api/keys/${id}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        setApiKeys(apiKeys.filter((key) => key.id !== id))
-      }
-    } catch (err) {
-      console.error("Failed to revoke API key:", err)
-    }
-  }
+  const table = useReactTable({
+    data: apiKeys,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
 
   return (
     <div className="api-key-table-container">
       <table className="api-key-table">
         <thead>
-          <tr className="api-key-table-header">
-            <th className="api-key-table-th">Name</th>
-            <th className="api-key-table-th">Expires At</th>
-            <th className="api-key-table-th">Key</th>
-            <th className="api-key-table-th api-key-table-th-actions"></th>
-          </tr>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id} className="api-key-table-header">
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className="api-key-table-th">
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         <tbody>
-          <ApiKeyForm onCreateKey={handleCreateKey} />
-
-          {apiKeys.map((key) => (
-            <ApiKeyRow
-              key={key.id}
-              apiKey={key}
-              isJustCreated={justCreatedKey === key.value}
-              onRevoke={handleRevokeKey}
-            />
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className="api-key-row">
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className="api-key-td">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
           ))}
         </tbody>
       </table>
 
       {apiKeys.length === 0 && (
         <div className="api-key-table-empty">
-          No API keys yet. Create your first one above.
+          No API keys found. Create one to get started.
         </div>
       )}
     </div>

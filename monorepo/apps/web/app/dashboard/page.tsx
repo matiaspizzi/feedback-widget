@@ -1,14 +1,20 @@
-import { DashboardHeader } from "./components/DashboardHeader"
-import { ApiKeyTable } from "./components/ApiKeyTable"
-import "./page.css"
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { ApiKeyRepository } from "@repositories/apikey-repository";
+import DashboardClient from "./dashboard-client";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const repository = new ApiKeyRepository();
+  const initialKeys = await repository.getAllByUserId(session.user.id);
+
   return (
-    <div className="dashboard-page">
-      <DashboardHeader />
-      <main className="dashboard-main">
-        <ApiKeyTable />
-      </main>
-    </div>
-  )
+    <DashboardClient
+      initialKeys={JSON.parse(JSON.stringify(initialKeys))}
+    />
+  );
 }
