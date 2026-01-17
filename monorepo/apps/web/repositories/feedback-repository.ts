@@ -1,27 +1,52 @@
 import { db, Prisma } from "@repo/database";
+import { NotFoundError, DatabaseError, PRISMA_NOT_FOUND_ERROR } from "@/lib/errors";
 
 export class FeedbackRepository {
   async getById(id: string) {
-    return db.feedback.findUnique({
-      where: { id },
-    });
+    try {
+      const feedback = await db.feedback.findUnique({
+        where: { id },
+      });
+
+      if (!feedback) throw new NotFoundError("Feedback");
+      return feedback;
+    } catch (error) {
+      if (error instanceof NotFoundError) throw error;
+      throw new DatabaseError("Error retrieving feedback");
+    }
   }
 
   async getWithFilters(filter: Prisma.FeedbackWhereInput) {
-    return db.feedback.findMany({
-      where: filter,
-    });
+    try {
+      return await db.feedback.findMany({
+        where: filter,
+        orderBy: { createdAt: 'desc' }
+      });
+    } catch (error) {
+      throw new DatabaseError("Error retrieving filtered feedback");
+    }
   }
 
   async create(data: Prisma.FeedbackCreateInput) {
-    return db.feedback.create({
-      data,
-    });
+    try {
+      return await db.feedback.create({
+        data,
+      });
+    } catch (error) {
+      throw new DatabaseError("Failed to submit feedback");
+    }
   }
 
   async deleteById(id: string) {
-    return db.feedback.delete({
-      where: { id },
-    });
+    try {
+      return await db.feedback.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_NOT_FOUND_ERROR) {
+        throw new NotFoundError("Feedback");
+      }
+      throw new DatabaseError("Failed to delete feedback record");
+    }
   }
 }
