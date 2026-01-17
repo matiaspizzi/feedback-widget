@@ -2,12 +2,12 @@ import NextAuth from "next-auth"
 import type { NextAuthConfig, NextAuthResult } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { verifyPassword } from "@/lib/password"
-import { prisma } from "@repo/database"
+import { db } from "@repo/database"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { loginSchema } from "@repo/shared"
 
 const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   providers: [
     Credentials({
@@ -24,7 +24,7 @@ const authConfig: NextAuthConfig = {
 
         const { email, password } = validatedFields.data
 
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
           where: { email },
         });
 
