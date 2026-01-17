@@ -4,6 +4,7 @@ import { ApiKeyService } from "@services/apikey-service";
 import { ApiKeyRepository } from "@repositories/apikey-repository";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { isDomainError, UnauthorizedError } from "@lib/errors";
 
 const repository = new ApiKeyRepository();
 const service = new ApiKeyService(repository);
@@ -13,7 +14,7 @@ export async function createApiKeyAction(data: { name: string; expiresAt: string
     const session = await auth();
 
     if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
+      throw new UnauthorizedError();
     }
 
     const result = await service.create({
@@ -29,12 +30,10 @@ export async function createApiKeyAction(data: { name: string; expiresAt: string
       data: { value: result.value }
     };
   } catch (error: any) {
-    if (error.message === "The expiration date cannot be in the past.") {
+    if (isDomainError(error)) {
       return { success: false, error: error.message };
     }
-    console.error("[CREATE_API_KEY_FATAL]:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to create key";
-    return { success: false, error: errorMessage };
+    return { success: false, error: "Failed to create key" };
   }
 }
 
@@ -43,7 +42,7 @@ export async function deleteApiKeyAction(id: string) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return { success: false, error: "Unauthorized" };
+      throw new UnauthorizedError();
     }
 
     await service.delete(id, session.user.id);
@@ -52,10 +51,9 @@ export async function deleteApiKeyAction(id: string) {
 
     return { success: true };
   } catch (error: any) {
-    if (error.message === "API Key not found") {
+    if (isDomainError(error)) {
       return { success: false, error: error.message };
     }
-    console.error("[DELETE_API_KEY_FATAL]:", error);
     return { success: false, error: "Failed to delete key" };
   }
 }

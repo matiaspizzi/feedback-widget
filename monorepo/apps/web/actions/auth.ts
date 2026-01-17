@@ -1,13 +1,13 @@
 "use server"
 
-import { saltAndHashPassword } from "@/lib/password"
+import { saltAndHashPassword } from "@lib/password"
 import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { loginSchema, registerSchema } from "@repo/shared"
 import { AuthState } from "./types"
-import { UserService } from "@/services/user-service"
-import { UserRepository } from "@/repositories"
+import { getAuthDeps } from "@lib/deps"
+import { isDomainError } from "@/lib/errors"
 
 export async function loginAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)
@@ -22,7 +22,6 @@ export async function loginAction(prevState: AuthState | null | undefined, formD
   try {
     await signIn("credentials", {
       ...validatedFields.data,
-      redirect: true,
       redirectTo: "/dashboard",
     })
   } catch (error) {
@@ -47,18 +46,20 @@ export async function registerAction(prevState: AuthState | null | undefined, fo
 
   try {
     const hashedPassword = await saltAndHashPassword(password)
-    const userRepository = new UserRepository()
-    const userService = new UserService(userRepository)
+    const { userService } = getAuthDeps()
 
     await userService.create({
       email,
       password: hashedPassword,
       name: name || null,
     })
+
   } catch (error: any) {
-    if (error.message === "User with this email already exists") {
-      return { message: "Email already exists" }
+    if (isDomainError(error)) {
+      return { message: error.message }
     }
+
+    console.error("[REGISTER_ERROR]:", error)
     return { message: "Error creating account" }
   }
 

@@ -9,15 +9,15 @@ export class UserService {
   }
 
   async getById(id: string) {
-    return this.repository.findById(id);
+    return this.repository.getById(id);
   }
 
   async getByEmail(email: string) {
-    return this.repository.findByEmail(email);
+    return this.repository.getByEmail(email);
   }
 
   async create(data: Prisma.UserCreateInput) {
-    const existingUser = await this.repository.findByEmail(data.email);
+    const existingUser = await this.repository.getByEmail(data.email);
 
     if (existingUser) {
       throw new Error("User with this email already exists");
