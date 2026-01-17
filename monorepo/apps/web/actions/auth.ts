@@ -7,6 +7,7 @@ import { redirect } from "next/navigation"
 import { loginSchema, registerSchema } from "@repo/shared"
 import { AuthState } from "./types"
 import { UserService } from "@/services/user-service"
+import { UserRepository } from "@/repositories"
 
 export async function loginAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)
@@ -46,9 +47,10 @@ export async function registerAction(prevState: AuthState | null | undefined, fo
 
   try {
     const hashedPassword = await saltAndHashPassword(password)
-    const userService = new UserService()
+    const userRepository = new UserRepository()
+    const userService = new UserService(userRepository)
 
-    await userService.createUser({
+    await userService.create({
       email,
       password: hashedPassword,
       name: name || null,
