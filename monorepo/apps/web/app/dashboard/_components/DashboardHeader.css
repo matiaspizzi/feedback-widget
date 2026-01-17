@@ -33,3 +33,8 @@
   background: var(--primary);
   border-color: var(--primary);
 }
+
+.dashboard-home-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
