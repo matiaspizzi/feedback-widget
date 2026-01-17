@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>ESM Test</title>
+</head>
+
+<body>
+  <script type="module">
+    import { FeedbackSDK } from '../dist/feedback-sdk.es.js';
+
+    const config = {
+      projectId: 'project-esm-demo',
+      apiKey: 'sk_test_456',
+      apiUrl: 'http://localhost:3000',
+      debug: true
+    };
+
+    try {
+      FeedbackSDK.init(config);
+      console.log("Widget initialized successfully");
+    } catch (error) {
+      console.error("Failed to load feedback widget", error);
+    }
+  </script>
+</body>

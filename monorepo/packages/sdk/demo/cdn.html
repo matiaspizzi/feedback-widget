@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDN Test</title>
+  <script src="../dist/feedback-sdk.umd.js"></script>
+</head>
+
+<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      FeedbackSDK.init({
+        projectId: 'demo-123',
+        apiKey: 'pk_test_abc123',
+        apiUrl: 'http://localhost:3000',
+        debug: true
+      });
+    });
+  </script>
+</body>
+
+</html>
