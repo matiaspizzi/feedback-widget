@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Modal } from "@components/ui"
+import { Modal, Button } from "@components/ui"
 import "./ModalApiKeyForm.css"
 
 interface ModalApiKeyFormProps {
@@ -73,14 +73,18 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
             </div>
             {error && <p className="error-text">{error}</p>}
             <div className="form-actions">
-              <button className="btn-revoke" type="button" onClick={onClose} disabled={isSubmitting}>Cancel</button>
-              <button
-                onClick={handleSubmit}
+              <Button
+                label="Cancel"
+                onClick={onClose}
+                variant="tertiary"
                 disabled={isSubmitting}
-                className="api-key-create-btn"
-              >
-                {isSubmitting ? 'Creating...' : 'Add'}
-              </button>
+              />
+              <Button
+                isLoading={isSubmitting}
+                label={isSubmitting ? 'Creating...' : 'Add'}
+                onClick={handleSubmit}
+                variant="primary"
+              />
             </div>
           </form>
         ) : (
@@ -92,11 +96,13 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
             </p>
             <div className="key-display">
               <code>{createdKey}</code>
-              <button onClick={copyToClipboard} className="btn-copy">Copy</button>
+              <Button onClick={copyToClipboard} label="Copy" variant="quaternary" />
             </div>
-            <button onClick={handleReset} className="btn-primary full-width">
-              Continue
-            </button>
+            <Button
+              label="Continue"
+              onClick={handleReset}
+              variant="primary"
+            />
           </div>
         )}
       </div>

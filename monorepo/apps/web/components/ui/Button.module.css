@@ -49,6 +49,20 @@
   color: white;
 }
 
+.quaternary {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--input-bg, #1a1a1a); /* Fallback por si no hay variables */
+  border: 1px solid var(--border, #333);
+}
+
+.quaternary:hover {
+  background: var(--primary, #0070f3);
+  border-color: var(--primary, #0070f3);
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;

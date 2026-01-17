@@ -30,40 +30,6 @@
   margin-top: 24px;
 }
 
-.btn-primary {
-  padding: 0.5rem 1.5rem;
-  background: linear-gradient(135deg, #0070f3 0%, #00a1ff 100%);
-  border: none;
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary:disabled {
-  background: #accfff;
-}
-
-.btn-primary:hover {
-  box-shadow: 0 0px 4px 4px rgba(41, 26, 255, 0.27);
-}
-
-.btn-revoke {
-  color: #ff4d4d;
-  background: transparent;
-  border: 1px solid rgba(255, 77, 77, 0.2);
-  padding: 4px 12px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  transition: all 0.2s ease;
-}
-
-.btn-revoke:hover {
-  background: #ff4d4d;
-  color: white;
-}
-
 .warning-box {
   padding: 16px 0;
   color: #e02727ff;
@@ -75,6 +41,7 @@
   background: #f4f4f5ff;
   padding: 12px;
   display: flex;
+  gap: 12px;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
@@ -86,18 +53,6 @@
   font-size: 1.1rem;
   color: #27272a;
   word-break: break-all;
-}
-
-.btn-copy {
-  background: white;
-  border: 1px solid #d4d4d8;
-  padding: 4px 12px;
-  cursor: pointer;
-  margin-left: 12px;
-}
-
-.btn-copy:hover {
-  background: #d3d3d3bd;
 }
 
 .full-width {
