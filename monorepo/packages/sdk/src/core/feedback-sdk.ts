@@ -5,16 +5,20 @@ export class FeedbackSDK {
   private static instance: FeedbackSDK;
   private config: SDKConfig | null = null;
   private userId: string;
+  private lastSubmission: number = 0;
 
   private constructor() {
     this.userId = this.getOrCreateUserId();
   }
 
-  public static getInstance(): FeedbackSDK {
-    if (!FeedbackSDK.instance) {
-      FeedbackSDK.instance = new FeedbackSDK();
+  private log(message: string, data?: any) {
+    if (this.config?.debug) {
+      console.log(`[FeedbackSDK] ${message}`, data || '');
     }
-    return FeedbackSDK.instance;
+  }
+
+  private error(message: string, error?: any) {
+    console.error(`[FeedbackSDK Error] ${message}`, error || '');
   }
 
   private getOrCreateUserId(): string {
@@ -30,11 +34,35 @@ export class FeedbackSDK {
 
   public init(config: SDKConfig): void {
     this.config = config;
-    if (this.config.debug) console.log('Feedback SDK Initialized', config);
+
+    this.log('Initializing with config', config);
+
+    if (typeof window !== 'undefined' && !document.querySelector('feedback-widget')) {
+      const widget = document.createElement('feedback-widget');
+      document.body.appendChild(widget);
+    }
+  }
+
+  public destroy(): void {
+    const existing = document.querySelector('feedback-widget');
+    if (existing) existing.remove();
+    this.config = null;
+  }
+
+  public static getInstance(): FeedbackSDK {
+    if (!FeedbackSDK.instance) {
+      FeedbackSDK.instance = new FeedbackSDK();
+    }
+    return FeedbackSDK.instance;
   }
 
   public async submitFeedback(rating: number, comment?: string): Promise<void> {
     if (!this.config) throw new Error("SDK not initialized. Call init() first.");
+
+    const now = Date.now();
+    if (now - this.lastSubmission < 5000) {
+      throw new Error("Please wait before sending more feedback.");
+    }
 
     const payload: FeedbackPayload = {
       projectId: this.config.projectId,
@@ -59,8 +87,9 @@ export class FeedbackSDK {
       });
 
       if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+      this.lastSubmission = Date.now();
     } catch (error) {
-      console.error('Feedback submission failed:', error);
+      this.error('Feedback submission failed', error);
       throw error;
     }
   }

@@ -1,10 +1,14 @@
 import { sdk } from './core/feedback-sdk';
-import './ui/widget'; // Importar para registrar el Web Component
+import './ui/widget';
 
-export const FeedbackSDK = sdk;
+const FeedbackSDK = {
+  init: sdk.init.bind(sdk),
+  submit: sdk.submitFeedback.bind(sdk),
+  destroy: sdk.destroy.bind(sdk),
+};
+
+export { FeedbackSDK };
 
 if (typeof window !== 'undefined') {
-  (window as any).FeedbackSDK = sdk;
+  (window as any).FeedbackSDK = FeedbackSDK;
 }
-
-export * from './ui/widget';

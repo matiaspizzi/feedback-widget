@@ -1,4 +1,3 @@
-// packages/sdk/src/main.ts
 import './style.css';
 import { FeedbackSDK } from './index';
 
@@ -48,13 +47,8 @@ const updateSDK = () => {
     debug: true
   };
 
+  FeedbackSDK.destroy();
   FeedbackSDK.init(config);
-
-  // Aseguramos que el widget esté presente en el DOM [cite: 10]
-  if (!document.querySelector('feedback-widget')) {
-    const widget = document.createElement('feedback-widget');
-    document.body.appendChild(widget);
-  }
 };
 
 const setupListeners = () => {
@@ -62,10 +56,8 @@ const setupListeners = () => {
   const apiKeyInput = document.querySelector('#apiKey') as HTMLInputElement;
   const resetBtn = document.querySelector('#reset-btn') as HTMLButtonElement;
 
-  // Inicialización inicial
   updateSDK();
 
-  // Escucha de cambios en tiempo real
   [projectIdInput, apiKeyInput].forEach(input => {
     input.addEventListener('input', () => {
       updateSDK();
