@@ -2,28 +2,28 @@ import { Prisma } from "@repo/database";
 import { FeedbackRepository } from "@repositories/feedback-repository";
 
 export class FeedbackService {
-  private feedbackRepository: FeedbackRepository;
+  private readonly repository: FeedbackRepository;
 
-  constructor() {
-    this.feedbackRepository = new FeedbackRepository();
+  constructor(repository: FeedbackRepository) {
+    this.repository = repository;
   }
 
-  async getFeedbackById(id: string) {
-    return this.feedbackRepository.getById(id);
+  async getById(id: string) {
+    return this.repository.getById(id);
   }
 
-  async getFeedbacksByProjectId(projectId: string) {
-    return this.feedbackRepository.getWithFilters({ projectId });
+  async getByProjectId(projectId: string) {
+    return this.repository.getWithFilters({ projectId });
   }
 
-  async createFeedback(data: {
+  async create(data: {
     projectId: string;
     userId?: string | null;
     rating: number;
     comment?: string | null;
     metadata?: any;
   }) {
-    return this.feedbackRepository.create({
+    return this.repository.create({
       projectId: data.projectId,
       userId: data.userId,
       rating: data.rating,
@@ -32,7 +32,7 @@ export class FeedbackService {
     });
   }
 
-  async deleteFeedback(id: string) {
-    return this.feedbackRepository.deleteById(id);
+  async delete(id: string) {
+    return this.repository.deleteById(id);
   }
 }

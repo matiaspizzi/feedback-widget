@@ -2,27 +2,27 @@ import { Prisma } from "@repo/database";
 import { UserRepository } from "@repositories/user-repository";
 
 export class UserService {
-  private userRepository: UserRepository;
+  private repository: UserRepository;
 
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(repository: UserRepository) {
+    this.repository = repository;
   }
 
-  async getUserById(id: string) {
-    return this.userRepository.findById(id);
+  async getById(id: string) {
+    return this.repository.findById(id);
   }
 
-  async getUserByEmail(email: string) {
-    return this.userRepository.findByEmail(email);
+  async getByEmail(email: string) {
+    return this.repository.findByEmail(email);
   }
 
-  async createUser(data: Prisma.UserCreateInput) {
-    const existingUser = await this.userRepository.findByEmail(data.email);
+  async create(data: Prisma.UserCreateInput) {
+    const existingUser = await this.repository.findByEmail(data.email);
 
     if (existingUser) {
       throw new Error("User with this email already exists");
     }
 
-    return this.userRepository.create(data);
+    return this.repository.create(data);
   }
 }
