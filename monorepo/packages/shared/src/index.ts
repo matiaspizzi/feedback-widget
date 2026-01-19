@@ -4,8 +4,8 @@ export const feedbackSchema = z.object({
   projectId: z.string().min(1, "Project ID is required"),
   userId: z.string().uuid(),
   rating: z.number().min(1).max(5),
-  comment: z.string().optional(),
-  timestamp: z.string().datetime(),
+  comment: z.string().max(250, "Comment must be at most 250 characters long").optional(),
+  timestamp: z.iso.datetime(),
   context: z.object({
     userAgent: z.string(),
     url: z.string(),
@@ -15,14 +15,14 @@ export const feedbackSchema = z.object({
 export type FeedbackPayload = z.infer<typeof feedbackSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z.email("Invalid email"),
   password: z.string().min(1, "Password is required"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z.email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
   name: z.string()
     .min(1, "Name is required")
