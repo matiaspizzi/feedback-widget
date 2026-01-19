@@ -1,8 +1,9 @@
 import { Prisma } from "@repo/database";
 import { UserRepository } from "@repositories";
+import { UniqueConstraintError } from "@lib/errors";
 
 export class UserService {
-  private repository: UserRepository;
+  private readonly repository: UserRepository;
 
   constructor(repository: UserRepository) {
     this.repository = repository;
@@ -20,7 +21,7 @@ export class UserService {
     const existingUser = await this.repository.getByEmail(data.email);
 
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      throw new UniqueConstraintError("User", "email");
     }
 
     return this.repository.create(data);

@@ -1,6 +1,10 @@
 import { randomBytes } from "crypto";
 import { ApiKeyRepository } from "@repositories";
-import { BadRequestError, UnauthorizedError } from "@lib/errors";
+import {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError
+} from "@lib/errors";
 
 export class ApiKeyService {
   private readonly repository: ApiKeyRepository;
@@ -10,7 +14,9 @@ export class ApiKeyService {
   }
 
   async getById(id: string) {
-    return this.repository.getById(id);
+    const apiKey = await this.repository.getById(id);
+    if (!apiKey) throw new NotFoundError("API Key");
+    return apiKey;
   }
 
   async getByValue(value: string) {
@@ -56,11 +62,11 @@ export class ApiKeyService {
     const apiKey = await this.repository.getById(id);
 
     if (!apiKey) {
-      throw new BadRequestError("API Key not found");
+      throw new NotFoundError("API Key");
     }
 
     if (apiKey.userId !== userId) {
-      throw new UnauthorizedError("Unauthorized");
+      throw new UnauthorizedError("You do not have permission to delete this key");
     }
 
     return this.repository.deleteById(id);
