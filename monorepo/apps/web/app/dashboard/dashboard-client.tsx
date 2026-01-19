@@ -17,13 +17,7 @@ export default function DashboardClient({ initialKeys }: DashboardClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCreateKey = async (name: string, expiresAt: string | null) => {
-    const result = await createApiKeyAction({ name, expiresAt });
-
-    if (!result.success || !result.data?.value) {
-      throw new Error(result.error || "Failed to generate key");
-    }
-
-    return { key: result.data.value };
+    return await createApiKeyAction({ name, expiresAt });
   };
 
   return (

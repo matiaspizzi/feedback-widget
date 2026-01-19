@@ -3,45 +3,51 @@
 import { useState } from "react"
 import { Modal, Button, Input } from "@components/ui"
 import "./ModalApiKeyForm.css"
+import { ActionResponse } from "@actions/types"
 
 interface ModalApiKeyFormProps {
   isOpen: boolean
   onClose: () => void
-  onCreateKey: (name: string, expiresAt: string | null) => Promise<{ key: string }>
+  onCreateKey: (name: string, expiresAt: string | null) => Promise<ActionResponse<{ value: string }>>
 }
 
 export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFormProps) => {
   const [name, setName] = useState("")
   const [expiry, setExpiry] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
+  const [generalError, setGeneralError] = useState<string | null>(null)
   const [createdKey, setCreatedKey] = useState<string | null>(null)
 
   const handleReset = () => {
     setName("")
     setExpiry("")
     setCreatedKey(null)
-    setError(null)
+    setFieldErrors({})
+    setGeneralError(null)
     setIsSubmitting(false)
     onClose()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!name.trim()) return setError("Name is required")
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFieldErrors({});
+    setGeneralError(null);
 
-    setIsSubmitting(true)
-    setError(null)
+    const result = await onCreateKey(name, expiry || null);
 
-    try {
-      const result = await onCreateKey(name, expiry || null)
-      setCreatedKey(result.key)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create API key")
-    } finally {
-      setIsSubmitting(false)
+    if (result.success) {
+      setCreatedKey(result.data.value);
+    } else {
+      setGeneralError(result.error);
+      if (result.details) {
+        setFieldErrors(result.details);
+      }
     }
-  }
+    setIsSubmitting(false);
+  };
 
   const copyToClipboard = () => {
     if (createdKey) navigator.clipboard.writeText(createdKey)
@@ -57,10 +63,10 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
               <Input
                 label="Name"
                 type="text"
-                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isSubmitting}
+                error={fieldErrors.name?.[0]}
               />
             </div>
             <div className="form-group">
@@ -70,12 +76,18 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
                 value={expiry}
                 onChange={(e) => setExpiry(e.target.value)}
                 disabled={isSubmitting}
+                error={fieldErrors.expiresAt?.[0]}
               />
             </div>
-            {error && <p className="error-text">{error}</p>}
+
+            {generalError && !fieldErrors.name && !fieldErrors.expiresAt && (
+              <p className="error-text">{generalError}</p>
+            )}
+
             <div className="form-actions">
               <Button
                 label="Cancel"
+                type="button"
                 onClick={onClose}
                 variant="tertiary"
                 disabled={isSubmitting}
