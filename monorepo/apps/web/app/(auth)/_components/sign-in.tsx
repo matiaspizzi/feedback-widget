@@ -1,9 +1,10 @@
 "use client"
 
 import { useFormState } from "react-dom"
-import { loginAction, registerAction } from "@/actions/auth"
+import { loginAction, registerAction } from "@actions/auth"
+import { AuthState } from "@actions/types"
 import Link from "next/link"
-import { AuthState } from "../actions/types"
+import { Input, Button } from "@components/ui"
 
 interface SignInProps {
   mode: "login" | "register"
@@ -32,12 +33,11 @@ export function SignIn({ mode }: SignInProps) {
         <form className="auth-form" action={formAction}>
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <input
-                id="name"
+              <Input
+                label="Name"
                 name="name"
                 type="text"
-                placeholder="John Doe"
+                required
               />
               {state?.errors?.name && (
                 <p className="field-error">{state.errors.name[0]}</p>
@@ -45,24 +45,22 @@ export function SignIn({ mode }: SignInProps) {
             </div>
           )}
           <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              id="email"
-              name="email"
+            <Input
+              label="Email"
               type="email"
-              placeholder="you@example.com"
+              name="email"
+              required
             />
             {state?.errors?.email && (
               <p className="field-error">{state.errors.email[0]}</p>
             )}
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
+            <Input
+              label="Password"
               type="password"
-              placeholder="••••••••"
+              name="password"
+              required
             />
             {state?.errors?.password && (
               <p className="field-error">{state.errors.password[0]}</p>
@@ -75,9 +73,7 @@ export function SignIn({ mode }: SignInProps) {
             </div>
           )}
 
-          <button type="submit" className="auth-button">
-            {isLogin ? "Sign In" : "Get Started"}
-          </button>
+          <Button type="submit" label={isLogin ? "Sign In" : "Get Started"} />
         </form>
 
         <div className="auth-footer">
