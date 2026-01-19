@@ -6,7 +6,7 @@ export class DomainError extends Error {
   constructor(
     public message: string,
     public status: number = 400,
-    public details?: Record<string, string[]>
+    public details?: Record<string, string[] | undefined>
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -50,7 +50,7 @@ export class DatabaseError extends DomainError {
 }
 
 export class BadRequestError extends DomainError {
-  constructor(message: string, details?: Record<string, string[]>) {
+  constructor(message: string, details?: Record<string, string[] | undefined>) {
     super(message, 400, details);
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }

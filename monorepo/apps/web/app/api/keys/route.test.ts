@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { POST } from "./route";
 import * as apiUtils from "@lib/api-utils";
+import { BadRequestError } from "@lib/errors";
 
 const vi_mockApiKeyService = {
   create: vi.fn(),
@@ -13,7 +14,7 @@ vi.mock("@lib/deps", () => ({
 
 vi.mock("@lib/api-utils", () => ({
   validateUserOrKey: vi.fn(),
-  parseJson: vi.fn(),
+  validateSchema: vi.fn(),
 }));
 
 vi.mock("@lib/api-error-handler", async (importOriginal) => {
@@ -32,7 +33,7 @@ describe("Keys Root API Endpoint", () => {
     const payload = { name: "Prod_Key", expiresAt: futureDate };
 
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
-    vi.mocked(apiUtils.parseJson).mockResolvedValue(payload);
+    vi.mocked(apiUtils.validateSchema).mockResolvedValue(payload);
     vi_mockApiKeyService.create.mockResolvedValue({
       id: "k1",
       name: payload.name,
@@ -59,8 +60,11 @@ describe("Keys Root API Endpoint", () => {
   it("POST: debe fallar si el nombre es inválido", async () => {
     const payload = { name: "$ %" };
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
-    vi.mocked(apiUtils.parseJson).mockResolvedValue(payload);
-
+    vi.mocked(apiUtils.validateSchema).mockImplementation(async () => {
+      throw new BadRequestError("Invalid payload", {
+        name: ["Name can only contain letters, numbers, hyphens and underscores"]
+      });
+    });
     const req = new NextRequest("http://localhost/api/keys", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -78,8 +82,7 @@ describe("Keys Root API Endpoint", () => {
 
   it("POST: debe fallar si el JSON es malformado", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
-    vi.mocked(apiUtils.parseJson).mockRejectedValue(new SyntaxError());
-
+    vi.mocked(apiUtils.validateSchema).mockRejectedValue(new SyntaxError("Unexpected token i in JSON"));
     const req = new NextRequest("http://localhost/api/keys", {
       method: "POST",
       body: "invalid-json",

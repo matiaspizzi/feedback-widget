@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { POST } from "./route";
 import * as apiUtils from "@lib/api-utils";
-import * as feedbackValidations from "@lib/validations/feedback";
 
 const vi_mockFeedbackService = {
   create: vi.fn(),
@@ -14,10 +13,7 @@ vi.mock("@lib/deps", () => ({
 
 vi.mock("@lib/api-utils", () => ({
   validateUserOrKey: vi.fn(),
-}));
-
-vi.mock("@lib/validations/feedback", () => ({
-  validateFeedbackBody: vi.fn(),
+  validateSchema: vi.fn(),
 }));
 
 vi.mock("@lib/api-error-handler", async (importOriginal) => {
@@ -40,7 +36,7 @@ describe("Feedback API Endpoint", () => {
 
   it("POST: debe crear un feedback exitosamente", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
-    vi.mocked(feedbackValidations.validateFeedbackBody).mockResolvedValue(validPayload);
+    vi.mocked(apiUtils.validateSchema).mockResolvedValue(validPayload);
     vi_mockFeedbackService.create.mockResolvedValue({ id: "fb_1" });
 
     const req = new NextRequest("http://localhost/api/feedback", {
@@ -61,7 +57,7 @@ describe("Feedback API Endpoint", () => {
 
   it("POST: debe retornar 400 si el JSON es inválido", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
-    vi.mocked(feedbackValidations.validateFeedbackBody).mockRejectedValue(new SyntaxError());
+    vi.mocked(apiUtils.validateSchema).mockRejectedValue(new SyntaxError());
 
     const req = new NextRequest("http://localhost/api/feedback", {
       method: "POST",
@@ -78,7 +74,7 @@ describe("Feedback API Endpoint", () => {
 
   it("POST: debe retornar 500 ante un error inesperado del sistema", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
-    vi.mocked(feedbackValidations.validateFeedbackBody).mockResolvedValue(validPayload);
+    vi.mocked(apiUtils.validateSchema).mockResolvedValue(validPayload);
 
     vi_mockFeedbackService.create.mockRejectedValue(
       new Error("Unexpected Database Crash"),

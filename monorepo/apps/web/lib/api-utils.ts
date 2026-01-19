@@ -1,8 +1,9 @@
 import { auth } from "@auth";
-import { UnauthorizedError } from "./errors";
+import { UnauthorizedError, BadRequestError } from "./errors";
 import { NextRequest } from "next/server";
 import { ApiKeyService } from "@services";
 import { ApiKeyRepository } from "@repositories";
+import { z } from "zod";
 
 export type SafeRequest = NextRequest & { parsedBody?: unknown };
 
@@ -25,8 +26,13 @@ export async function validateUserOrKey(req: Request): Promise<string> {
   throw new UnauthorizedError("Authentication required: Session or API Key");
 }
 
-export async function parseJson(req: NextRequest): Promise<unknown> {
-  const contentType = req.headers.get("content-type");
-  if (!contentType?.includes("application/json")) return undefined;
-  return await req.json();
+export async function validateSchema<T>(req: Request, schema: z.ZodSchema<T>): Promise<T> {
+  const json = await req.json();
+  const result = schema.safeParse(json);
+
+  if (!result.success) {
+    throw new BadRequestError("Invalid payload", result.error.flatten().fieldErrors);
+  }
+
+  return result.data;
 }
