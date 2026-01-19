@@ -27,7 +27,8 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
     if (!validation.success) {
       return {
         success: false,
-        error: "Invalid input data"
+        error: "Invalid input data",
+        details: validation.error.flatten().fieldErrors,
       };
     }
 
@@ -46,8 +47,14 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
 
   } catch (error: unknown) {
     if (isDomainError(error)) {
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error.message,
+        details: error.details
+      };
     }
+
+    console.error("[CREATE_KEY_ACTION_ERROR]:", error);
     return { success: false, error: "An unexpected error occurred" };
   }
 }
@@ -55,19 +62,15 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
 export async function deleteApiKeyAction(id: string): Promise<ActionResponse<void>> {
   try {
     const session = await auth();
-
-    if (!session?.user?.id) {
-      throw new UnauthorizedError();
-    }
+    if (!session?.user?.id) throw new UnauthorizedError();
 
     await service.delete(id, session.user.id);
-
     revalidatePath("/dashboard");
 
     return { success: true, data: undefined };
   } catch (error: unknown) {
     if (isDomainError(error)) {
-      return { success: false, error: error.message };
+      return { success: false, error: error.message, details: error.details };
     }
     return { success: false, error: "Failed to delete key" };
   }
