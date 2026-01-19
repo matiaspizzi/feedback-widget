@@ -50,7 +50,7 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
       return {
         success: false,
         error: error.message,
-        details: error.details
+        details: error.details as Record<string, string[]> | undefined
       };
     }
 
@@ -70,7 +70,7 @@ export async function deleteApiKeyAction(id: string): Promise<ActionResponse<voi
     return { success: true, data: undefined };
   } catch (error: unknown) {
     if (isDomainError(error)) {
-      return { success: false, error: error.message, details: error.details };
+      return { success: false, error: error.message, details: error.details as Record<string, string[]> | undefined };
     }
     return { success: false, error: "Failed to delete key" };
   }
