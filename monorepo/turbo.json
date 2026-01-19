@@ -1,35 +1,34 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  "ui": "tui",
   "globalEnv": [
-    "DATABASE_URL",
-    "FEEDBACK_API_KEY"
+    "DATABASE_URL"
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "!.next/cache/**"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": [
-        "DATABASE_URL",
-        "FEEDBACK_API_KEY"
+        "DATABASE_URL"
       ]
     },
-    "db:migrate:dev": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "db:generate": {
       "cache": false
+    },
+    "db:migrate": {
+      "cache": false,
+      "persistent": true
     },
     "db:migrate:reset": {
       "cache": false
     },
-    "db:migrate:deploy": {
+    "db:deploy": {
       "cache": false
     },
     "db:push": {
@@ -37,20 +36,6 @@
     },
     "db:seed": {
       "cache": false
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true,
-      "env": [
-        "FEEDBACK_API_KEY"
-      ]
-    },
-    "generate": {
-      "dependsOn": [
-        "^generate"
-      ],
-      "cache": false
-    },
-    "lint": {}
+    }
   }
 }
