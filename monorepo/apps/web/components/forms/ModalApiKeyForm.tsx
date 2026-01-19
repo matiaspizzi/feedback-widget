@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Modal, Button } from "@components/ui"
+import { Modal, Button, Input } from "@components/ui"
 import "./ModalApiKeyForm.css"
 
 interface ModalApiKeyFormProps {
@@ -22,6 +22,7 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
     setExpiry("")
     setCreatedKey(null)
     setError(null)
+    setIsSubmitting(false)
     onClose()
   }
 
@@ -53,18 +54,18 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
           <form onSubmit={handleSubmit} className="api-key-form">
             <h2>Create New API Key</h2>
             <div className="form-group">
-              <label>Name *</label>
-              <input
+              <Input
+                label="Name"
                 type="text"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isSubmitting}
               />
             </div>
             <div className="form-group">
-              <label>Expiration</label>
-              <input
-                className="api-key-expiry"
+              <Input
+                label="Expiration"
                 type="datetime-local"
                 value={expiry}
                 onChange={(e) => setExpiry(e.target.value)}

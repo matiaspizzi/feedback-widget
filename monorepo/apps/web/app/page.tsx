@@ -1,5 +1,6 @@
 import { auth, signOut } from "@/auth"
 import Link from "next/link"
+import { Button } from "@components/ui"
 
 export default async function IndexPage() {
   const session = await auth()
@@ -30,9 +31,7 @@ export default async function IndexPage() {
                 await signOut()
               }}
             >
-              <button type="submit" className="auth-button" style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)' }}>
-                Logout
-              </button>
+              <Button type="submit" label="Logout" variant="secondary" />
             </form>
           </div>
         ) : (
