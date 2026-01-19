@@ -29,7 +29,7 @@ export async function createApiKeyAction(data: { name: string; expiresAt: string
       success: true,
       data: { value: result.value }
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDomainError(error)) {
       return { success: false, error: error.message };
     }
@@ -50,7 +50,7 @@ export async function deleteApiKeyAction(id: string) {
     revalidatePath("/dashboard");
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDomainError(error)) {
       return { success: false, error: error.message };
     }

@@ -26,7 +26,7 @@ export function withAuth<T>(
 }
 
 export function withApiKey<T>(
-  handler: (req: Request, ctx: { userId: string; deps: T }, params: any) => Promise<NextResponse>,
+  handler: (_req: Request, _ctx: { userId: string; deps: T }, _params: unknown) => Promise<NextResponse>,
   getDeps: () => T
 ) {
   return async (req: Request, { params }: any) => {

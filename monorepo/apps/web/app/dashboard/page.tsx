@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@auth";
 import { redirect } from "next/navigation";
 import { ApiKeyRepository } from "@repositories/apikey-repository";
 import DashboardClient from "./dashboard-client";
