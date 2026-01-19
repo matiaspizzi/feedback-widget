@@ -5,10 +5,22 @@ import { verifyPassword } from "@lib/password"
 import { db } from "@repo/database"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { loginSchema } from "@repo/shared"
+import { UserRepository } from "@repositories"
+
+const userRepository = new UserRepository();
 
 const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
+  logger: {
+    error(code, ...args) {
+      if (code.name === "CredentialsSignin") {
+        console.warn(`[auth] Invalid credentials attempt`);
+        return;
+      }
+      console.error(code, ...args);
+    },
+  },
   providers: [
     Credentials({
       credentials: {
@@ -18,32 +30,20 @@ const authConfig: NextAuthConfig = {
       authorize: async (credentials) => {
         const validatedFields = loginSchema.safeParse(credentials)
 
-        if (!validatedFields.success) {
-          return null
-        }
+        if (!validatedFields.success) return null;
 
-        const { email, password } = validatedFields.data
+        const { email, password } = validatedFields.data;
 
-        const user = await db.user.findUnique({
-          where: { email },
-        });
+        const user = await userRepository.getByEmail(email);
 
-        if (!user) {
-          return null;
-        }
-
-        if (!user.password) {
-          return null;
-        }
+        if (!user || !user.password) return null;
 
         const isPasswordCorrect = await verifyPassword(
           password,
           user.password
         );
 
-        if (!isPasswordCorrect) {
-          return null;
-        }
+        if (!isPasswordCorrect) return null;
 
         return {
           id: user.id,

@@ -9,7 +9,10 @@ import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { AuthState } from "./types"
 
-export async function loginAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
+export async function loginAction(
+  _prevState: AuthState | null | undefined,
+  formData: FormData
+): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)
   const validatedFields = loginSchema.safeParse(rawData)
 
@@ -28,11 +31,15 @@ export async function loginAction(prevState: AuthState | null | undefined, formD
     if (error instanceof AuthError) {
       return { message: "Invalid email or password" }
     }
+
     throw error
   }
 }
 
-export async function registerAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
+export async function registerAction(
+  _prevState: AuthState | null | undefined,
+  formData: FormData
+): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)
   const validatedFields = registerSchema.safeParse(rawData)
 
@@ -53,14 +60,12 @@ export async function registerAction(prevState: AuthState | null | undefined, fo
       password: hashedPassword,
       name: name || null,
     })
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDomainError(error)) {
       return { message: error.message }
     }
 
-    console.error("[REGISTER_ERROR]:", error)
-    return { message: "Error creating account" }
+    return { message: "An unexpected error occurred during registration" }
   }
 
   redirect("/login")
