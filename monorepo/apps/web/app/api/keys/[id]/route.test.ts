@@ -1,46 +1,69 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import type { MockHandler } from '@tests/types';
+import { DELETE } from './route';
+import { NotFoundError, UnauthorizedError } from '@lib/errors';
+import * as apiUtils from "@lib/api-utils";
 
-interface ApiKeyDeps {
-  apiKeyService: {
-    delete: ReturnType<typeof vi.fn>;
-  };
-}
-
-const mockApiKeyService = { delete: vi.fn() };
+const vi_mockApiKeyService = {
+  delete: vi.fn()
+};
 
 vi.mock('@lib/deps', () => ({
-  getApiKeyDeps: () => ({
-    apiKeyService: mockApiKeyService,
-  }),
+  getApiKeyDeps: () => ({ apiKeyService: vi_mockApiKeyService }),
 }));
 
 vi.mock('@lib/api-utils', () => ({
-  withAuth: (handler: MockHandler<ApiKeyDeps>) =>
-    async (req: NextRequest, context: unknown) => {
-      return handler(
-        req,
-        { userId: 'user_123', deps: { apiKeyService: mockApiKeyService } },
-        context
-      );
-    },
+  validateUserOrKey: vi.fn(),
 }));
 
-import { DELETE } from './route';
+vi.mock("@lib/api-error-handler", async (importOriginal) => {
+  return await importOriginal<typeof import("@lib/api-error-handler")>();
+});
 
 describe('Keys [id] DELETE Endpoint', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('debe eliminar una API Key exitosamente', async () => {
-    mockApiKeyService.delete.mockResolvedValue(undefined);
+  const userId = 'user_123';
+  const keyId = 'k1';
 
-    const req = new NextRequest('http://localhost/api/keys/key_123', { method: 'DELETE' });
+  it('debe retornar 204 al eliminar exitosamente', async () => {
+    vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
+    vi_mockApiKeyService.delete.mockResolvedValue(undefined);
 
-    const response = await DELETE(req, { params: { id: 'key_123' } } as unknown);
+    const req = new NextRequest(`http://localhost/api/keys/${keyId}`, { method: 'DELETE' });
+    const response = await DELETE(req, { params: { id: keyId } });
 
     expect(response.status).toBe(204);
+    expect(vi_mockApiKeyService.delete).toHaveBeenCalledWith(keyId, userId);
+  });
+
+  it('debe retornar 404 si el servicio lanza NotFoundError', async () => {
+    vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
+    vi_mockApiKeyService.delete.mockRejectedValue(new NotFoundError('API Key'));
+
+    const req = new NextRequest('http://localhost/api/keys/invalid', { method: 'DELETE' });
+    const response = await DELETE(req, { params: { id: 'invalid' } });
+
+    const json = await response.json() as { success: boolean; error: string };
+
+    expect(response.status).toBe(404);
+    expect(json.success).toBe(false);
+    expect(json.error).toContain('not found');
+  });
+
+  it('debe retornar 401 si el servicio lanza UnauthorizedError', async () => {
+    vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
+    vi_mockApiKeyService.delete.mockRejectedValue(new UnauthorizedError('Ownership mismatch'));
+
+    const req = new NextRequest(`http://localhost/api/keys/${keyId}`, { method: 'DELETE' });
+    const response = await DELETE(req, { params: { id: keyId } });
+
+    const json = await response.json() as { success: boolean; error: string };
+
+    expect(response.status).toBe(401);
+    expect(json.success).toBe(false);
+    expect(json.error).toBe('Ownership mismatch');
   });
 });
