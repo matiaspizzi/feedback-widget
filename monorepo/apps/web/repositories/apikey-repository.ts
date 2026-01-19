@@ -1,32 +1,30 @@
 import { db, Prisma } from "@repo/database";
-import { UniqueConstraintError, DatabaseError, NotFoundError, PRISMA_NOT_FOUND_ERROR } from "@lib/errors";
+import {
+  UniqueConstraintError,
+  DatabaseError,
+  NotFoundError,
+  PRISMA_NOT_FOUND_ERROR,
+  PRISMA_UNIQUE_KEY_ERROR
+} from "@lib/errors";
 
 export class ApiKeyRepository {
   async getById(id: string) {
     try {
-      const apiKey = await db.apiKey.findUnique({
+      return await db.apiKey.findUnique({
         where: { id },
       });
-
-      if (!apiKey) throw new NotFoundError("API Key");
-      return apiKey;
     } catch (error) {
-      if (error instanceof NotFoundError) throw error;
-      throw new DatabaseError("Error retrieving API Key");
+      throw new DatabaseError("Error retrieving API Key by ID");
     }
   }
 
   async getByValue(value: string) {
     try {
-      const apiKey = await db.apiKey.findUnique({
+      return await db.apiKey.findUnique({
         where: { value },
       });
-
-      if (!apiKey) throw new NotFoundError("API Key");
-      return apiKey;
     } catch (error) {
-      if (error instanceof NotFoundError) throw error;
-      throw new DatabaseError("Error retrieving API Key");
+      throw new DatabaseError("Error retrieving API Key by value");
     }
   }
 
@@ -37,28 +35,22 @@ export class ApiKeyRepository {
         orderBy: orderBy || { createdAt: "desc" },
       });
     } catch (error) {
-      throw new DatabaseError("Error retrieving API Keys");
+      throw new DatabaseError("Error retrieving API Keys with filters");
     }
   }
 
   async getAllByUserId(userId: string) {
-    try {
-      return await this.getWithFilters({ userId });
-    } catch (error) {
-      throw new DatabaseError("Error retrieving API Keys");
-    }
+    return this.getWithFilters({ userId });
   }
 
-  async create(data: any) {
+  async create(data: Prisma.ApiKeyCreateInput) {
     try {
       return await db.apiKey.create({ data });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new UniqueConstraintError("API Key", "name");
-        }
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_UNIQUE_KEY_ERROR) {
+        throw new UniqueConstraintError("API Key", "name");
       }
-      throw new DatabaseError("Error creating API Key");
+      throw new DatabaseError("Error creating API Key record");
     }
   }
 

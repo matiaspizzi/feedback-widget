@@ -1,17 +1,17 @@
 import { db, Prisma } from "@repo/database";
-import { NotFoundError, DatabaseError, PRISMA_NOT_FOUND_ERROR } from "@lib/errors";
+import {
+  NotFoundError,
+  DatabaseError,
+  PRISMA_NOT_FOUND_ERROR
+} from "@lib/errors";
 
 export class FeedbackRepository {
   async getById(id: string) {
     try {
-      const feedback = await db.feedback.findUnique({
+      return await db.feedback.findUnique({
         where: { id },
       });
-
-      if (!feedback) throw new NotFoundError("Feedback");
-      return feedback;
     } catch (error) {
-      if (error instanceof NotFoundError) throw error;
       throw new DatabaseError("Error retrieving feedback");
     }
   }
@@ -33,7 +33,7 @@ export class FeedbackRepository {
         data,
       });
     } catch (error) {
-      throw new DatabaseError("Failed to submit feedback");
+      throw new DatabaseError("Failed to persist feedback record");
     }
   }
 
