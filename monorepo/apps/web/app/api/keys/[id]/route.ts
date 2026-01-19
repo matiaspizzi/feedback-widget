@@ -1,19 +1,20 @@
-import { NextResponse } from "next/server";
-import { withAuth } from "@lib/api-utils";
+import { NextRequest, NextResponse } from "next/server";
+import { validateUserOrKey } from "@lib/api-utils";
+import { toResponse } from "@lib/api-error-handler";
 import { getApiKeyDeps } from "@lib/deps";
 
-export const DELETE = withAuth(async (_req, { userId, deps }, { params }) => {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
+    const userId = await validateUserOrKey(req);
     const { id } = params;
-
-    if (!id) {
-      return NextResponse.json({ success: false, error: "ID required" }, { status: 400 });
-    }
-
+    const deps = getApiKeyDeps();
     await deps.apiKeyService.delete(id, userId);
 
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: "Deletion failed" }, { status: 500 });
+  } catch (error: unknown) {
+    return toResponse(error);
   }
-}, getApiKeyDeps);
+}

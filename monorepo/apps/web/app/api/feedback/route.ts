@@ -1,32 +1,20 @@
-import { NextResponse } from 'next/server';
-import { feedbackSchema } from '@repo/shared';
-import { withApiKey } from '@lib/api-utils';
-import { getFeedbackDeps } from '@lib/deps';
+import { NextRequest, NextResponse } from "next/server";
+import { toResponse } from "@lib/api-error-handler";
+import { validateUserOrKey } from "@lib/api-utils";
+import { validateFeedbackBody } from "@lib/validations/feedback";
+import { getFeedbackDeps } from "@lib/deps";
 
-export const POST = withApiKey(async (req, { deps }) => {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const result = feedbackSchema.safeParse(body);
+    const userId = await validateUserOrKey(req);
 
-    if (!result.success) {
-      return NextResponse.json({
-        success: false,
-        error: "Validation Failed",
-        details: result.error.flatten()
-      }, { status: 400 });
-    }
+    const data = await validateFeedbackBody(req);
 
-    const feedback = await deps.feedbackService.create(result.data);
+    const deps = getFeedbackDeps();
+    const feedback = await deps.feedbackService.create({ ...data, userId });
 
-    return NextResponse.json({
-      success: true,
-      data: feedback
-    }, { status: 201 });
-
+    return NextResponse.json({ success: true, data: feedback }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: "Internal Server Error"
-    }, { status: 500 });
+    return toResponse(error);
   }
-}, getFeedbackDeps);
+}
