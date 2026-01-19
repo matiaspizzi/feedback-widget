@@ -1,0 +1,27 @@
+.Input {
+  padding: 0.75rem 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1rem;
+  transition: all 0.2s;
+  color-scheme: dark;
+  font-family: inherit;
+}
+
+.Input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+}
+
+.Input:disabled {
+  background-color: var(--input-bg);
+  cursor: not-allowed;
+}
+
+.InputLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
