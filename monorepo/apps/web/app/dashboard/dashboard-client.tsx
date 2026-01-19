@@ -6,10 +6,11 @@ import { ApiKeyTable } from "./_components/ApiKeyTable";
 import { ModalApiKeyForm } from "@/components/forms/ModalApiKeyForm";
 import { createApiKeyAction } from "@actions/api-key";
 import { Button } from "@components/ui";
+import type { ApiKey } from "@repo/database";
 import "./page.css";
 
 interface DashboardClientProps {
-  initialKeys: any[];
+  initialKeys: ApiKey[];
 }
 
 export default function DashboardClient({ initialKeys }: DashboardClientProps) {

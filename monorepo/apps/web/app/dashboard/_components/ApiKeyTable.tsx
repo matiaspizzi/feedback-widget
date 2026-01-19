@@ -9,14 +9,7 @@ import {
 } from "@tanstack/react-table"
 import { deleteApiKeyAction } from "@actions/api-key"
 import "./ApiKeyTable.css"
-
-interface ApiKey {
-  id: string
-  name: string
-  value: string
-  createdAt: string
-  expiresAt: string | null
-}
+import type { ApiKey } from "@repo/database"
 
 const columnHelper = createColumnHelper<ApiKey>()
 

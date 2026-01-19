@@ -7,7 +7,6 @@ export const getFeedbackDeps = () => ({
 
 export const getApiKeyDeps = () => ({
   apiKeyService: new ApiKeyService(new ApiKeyRepository()),
-  userService: new UserService(new UserRepository()),
 });
 
 export const getAuthDeps = () => ({
