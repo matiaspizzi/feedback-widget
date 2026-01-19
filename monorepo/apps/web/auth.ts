@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import type { NextAuthConfig, NextAuthResult } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { verifyPassword } from "@/lib/password"
+import { verifyPassword } from "@lib/password"
 import { db } from "@repo/database"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { loginSchema } from "@repo/shared"

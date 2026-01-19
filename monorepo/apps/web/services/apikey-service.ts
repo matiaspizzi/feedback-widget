@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import { ApiKeyRepository } from "@repositories";
-import { BadRequestError } from "@lib/errors";
+import { BadRequestError, UnauthorizedError } from "@lib/errors";
 
 export class ApiKeyService {
   private readonly repository: ApiKeyRepository;
@@ -56,11 +56,11 @@ export class ApiKeyService {
     const apiKey = await this.repository.getById(id);
 
     if (!apiKey) {
-      throw new Error("API Key not found");
+      throw new BadRequestError("API Key not found");
     }
 
     if (apiKey.userId !== userId) {
-      throw new Error("Unauthorized");
+      throw new UnauthorizedError("Unauthorized");
     }
 
     return this.repository.deleteById(id);
