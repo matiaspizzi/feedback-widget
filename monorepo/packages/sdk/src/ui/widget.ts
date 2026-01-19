@@ -74,13 +74,8 @@ export class FeedbackWidget extends HTMLElement {
       this.isSuccess = true;
       this.isSubmitting = false;
       this.render();
-
-      setTimeout(() => {
-        if (this.isOpen) this.toggleModal();
-      }, 2000);
-
     } catch (error) {
-      this.showError('Failed to send. Try again.');
+      this.showError(String(error));
       this.isSubmitting = false;
       this.updateSubmitButtonState();
     }
