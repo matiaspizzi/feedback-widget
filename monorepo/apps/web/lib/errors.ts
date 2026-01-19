@@ -44,6 +44,13 @@ export class DatabaseError extends DomainError {
   }
 }
 
+export class BadRequestError extends DomainError {
+  constructor(message: string) {
+    super(message);
+    this.code = "BAD_REQUEST";
+  }
+}
+
 export function isDomainError(error: unknown): error is DomainError {
   return error instanceof DomainError;
 }

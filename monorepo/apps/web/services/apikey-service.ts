@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import { ApiKeyRepository } from "@repositories";
+import { BadRequestError } from "@lib/errors";
 
 export class ApiKeyService {
   private readonly repository: ApiKeyRepository;
@@ -36,7 +37,7 @@ export class ApiKeyService {
 
   async create(data: { name: string; userId: string; expiresAt?: Date | null }) {
     if (data.expiresAt && data.expiresAt < new Date()) {
-      throw new Error("The expiration date cannot be in the past.");
+      throw new BadRequestError("The expiration date cannot be in the past.");
     }
 
     const keyValue = `fk_${randomBytes(24).toString("hex")}`;
