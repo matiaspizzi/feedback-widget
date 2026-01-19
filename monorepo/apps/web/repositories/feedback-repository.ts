@@ -1,5 +1,5 @@
 import { db, Prisma } from "@repo/database";
-import { NotFoundError, DatabaseError, PRISMA_NOT_FOUND_ERROR } from "@/lib/errors";
+import { NotFoundError, DatabaseError, PRISMA_NOT_FOUND_ERROR } from "@lib/errors";
 
 export class FeedbackRepository {
   async getById(id: string) {

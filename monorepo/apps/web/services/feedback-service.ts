@@ -1,5 +1,5 @@
 import { Prisma } from "@repo/database";
-import { FeedbackRepository } from "@repositories/feedback-repository";
+import { FeedbackRepository } from "@repositories";
 
 export class FeedbackService {
   private readonly repository: FeedbackRepository;

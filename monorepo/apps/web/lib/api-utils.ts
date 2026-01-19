@@ -1,7 +1,7 @@
-import { auth } from "@/auth";
+import { auth } from "@auth";
+import { ApiKeyRepository } from "@repositories";
+import { ApiKeyService } from "@services";
 import { NextResponse } from "next/server";
-import { ApiKeyRepository } from "@repositories/apikey-repository";
-import { ApiKeyService } from "@services/apikey-service";
 
 export function withAuth<T>(
   handler: (req: Request, ctx: { userId: string; deps: T }, params: any) => Promise<NextResponse>,

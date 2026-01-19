@@ -1,8 +1,8 @@
 "use server";
 
-import { ApiKeyService } from "@services/apikey-service";
-import { ApiKeyRepository } from "@repositories/apikey-repository";
-import { auth } from "@/auth";
+import { ApiKeyService } from "@services";
+import { ApiKeyRepository } from "@repositories";
+import { auth } from "@auth";
 import { revalidatePath } from "next/cache";
 import { isDomainError, UnauthorizedError } from "@lib/errors";
 

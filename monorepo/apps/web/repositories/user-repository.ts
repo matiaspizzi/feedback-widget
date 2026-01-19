@@ -1,5 +1,5 @@
 import { db, Prisma } from "@repo/database";
-import { UniqueConstraintError, DatabaseError, NotFoundError, PRISMA_UNIQUE_KEY_ERROR } from "@/lib/errors";
+import { UniqueConstraintError, DatabaseError, NotFoundError, PRISMA_UNIQUE_KEY_ERROR } from "@lib/errors";
 
 export class UserRepository {
   async getById(id: string) {

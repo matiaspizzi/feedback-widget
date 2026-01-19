@@ -1,13 +1,13 @@
 "use server"
 
+import { loginSchema, registerSchema } from "@repo/shared"
 import { saltAndHashPassword } from "@lib/password"
-import { signIn } from "@/auth"
+import { isDomainError } from "@lib/errors"
+import { getAuthDeps } from "@lib/deps"
+import { signIn } from "@auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
-import { loginSchema, registerSchema } from "@repo/shared"
 import { AuthState } from "./types"
-import { getAuthDeps } from "@lib/deps"
-import { isDomainError } from "@/lib/errors"
 
 export async function loginAction(prevState: AuthState | null | undefined, formData: FormData): Promise<AuthState | null | undefined> {
   const rawData = Object.fromEntries(formData)

@@ -1,5 +1,5 @@
 import { Prisma } from "@repo/database";
-import { UserRepository } from "@repositories/user-repository";
+import { UserRepository } from "@repositories";
 
 export class UserService {
   private repository: UserRepository;

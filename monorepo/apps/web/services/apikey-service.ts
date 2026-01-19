@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { ApiKeyRepository } from "@repositories/apikey-repository";
+import { ApiKeyRepository } from "@repositories";
 
 export class ApiKeyService {
   private readonly repository: ApiKeyRepository;

@@ -1,5 +1,5 @@
 import { db, Prisma } from "@repo/database";
-import { UniqueConstraintError, DatabaseError, NotFoundError, PRISMA_NOT_FOUND_ERROR } from "../lib/errors";
+import { UniqueConstraintError, DatabaseError, NotFoundError, PRISMA_NOT_FOUND_ERROR } from "@lib/errors";
 
 export class ApiKeyRepository {
   async getById(id: string) {

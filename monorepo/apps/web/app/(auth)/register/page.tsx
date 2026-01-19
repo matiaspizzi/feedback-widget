@@ -1,4 +1,4 @@
-import { SignIn } from "@components/sign-in"
+import { SignIn } from "../_components/sign-in"
 
 export default function RegisterPage() {
   return <SignIn mode="register" />
