@@ -1,29 +1,44 @@
 import { NextResponse } from "next/server";
 import { apiKeySchema } from "@repo/shared";
-import { withAuth } from "@/lib/api-utils";
-import { getApiKeyDeps } from "@/lib/deps";
-
-export const GET = withAuth(async (_req, { userId, deps }) => {
-  const apiKeys = await deps.apiKeyService.getAllByUserId(userId);
-  return NextResponse.json(apiKeys);
-}, getApiKeyDeps);
+import { withAuth } from "@lib/api-utils";
+import { getApiKeyDeps } from "@lib/deps";
 
 export const POST = withAuth(async (req, { userId, deps }) => {
-  const body = await req.json();
-  const validatedFields = apiKeySchema.safeParse(body);
+  try {
+    const body = await req.json();
+    const validation = apiKeySchema.safeParse(body);
 
-  if (!validatedFields.success) {
-    const errorMessage = validatedFields.error.issues?.[0]?.message || "Invalid fields";
-    return new NextResponse(errorMessage, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid payload",
+          details: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const apiKey = await deps.apiKeyService.create({
+      name: validation.data.name,
+      userId: userId,
+      expiresAt: validation.data.expiresAt ? new Date(validation.data.expiresAt) : null,
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: apiKey,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal Server Error",
+      },
+      { status: 500 }
+    );
   }
-
-  const { name, expiresAt } = validatedFields.data;
-
-  const apiKey = await deps.apiKeyService.create({
-    name,
-    userId: userId,
-    expiresAt: expiresAt ? new Date(expiresAt) : null,
-  });
-
-  return NextResponse.json(apiKey);
 }, getApiKeyDeps);

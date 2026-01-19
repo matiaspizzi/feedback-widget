@@ -4,27 +4,29 @@ import { withApiKey } from '@lib/api-utils';
 import { getFeedbackDeps } from '@lib/deps';
 
 export const POST = withApiKey(async (req, { deps }) => {
-  const body = await req.json();
-  const result = feedbackSchema.safeParse(body);
+  try {
+    const body = await req.json();
+    const result = feedbackSchema.safeParse(body);
 
-  if (!result.success) {
+    if (!result.success) {
+      return NextResponse.json({
+        success: false,
+        error: "Validation Failed",
+        details: result.error.flatten()
+      }, { status: 400 });
+    }
+
+    const feedback = await deps.feedbackService.create(result.data);
+
     return NextResponse.json({
-      error: "Invalid payload",
-      details: result.error.format()
-    }, { status: 400 });
+      success: true,
+      data: feedback
+    }, { status: 201 });
+
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: "Internal Server Error"
+    }, { status: 500 });
   }
-
-  const feedback = await deps.feedbackService.create({
-    projectId: result.data.projectId,
-    userId: result.data.userId,
-    rating: result.data.rating,
-    comment: result.data.comment,
-    metadata: result.data.context,
-  });
-
-  return NextResponse.json({
-    success: true,
-    id: feedback.id
-  }, { status: 201 });
-
 }, getFeedbackDeps);
