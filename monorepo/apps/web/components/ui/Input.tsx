@@ -5,6 +5,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   required?: boolean;
   // variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary';
+  error?: string;
 }
 
 export const Input = ({
@@ -13,6 +14,7 @@ export const Input = ({
   // variant = 'primary',
   disabled,
   className = '',
+  error = '',
   ...props
 }: InputProps) => {
 
@@ -28,6 +30,7 @@ export const Input = ({
         disabled={disabled}
         {...props}
       />
+      {error && <p className="error-text">{error}</p>}
     </>
   );
 };
