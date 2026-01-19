@@ -5,22 +5,36 @@ import { ApiKeyRepository } from "@repositories";
 import { auth } from "@auth";
 import { revalidatePath } from "next/cache";
 import { isDomainError, UnauthorizedError } from "@lib/errors";
+import { apiKeySchema } from "@repo/shared";
+import { ActionResponse } from "./types";
 
 const repository = new ApiKeyRepository();
 const service = new ApiKeyService(repository);
 
-export async function createApiKeyAction(data: { name: string; expiresAt: string | null }) {
+interface CreateKeyData {
+  value: string;
+}
+
+export async function createApiKeyAction(rawData: unknown): Promise<ActionResponse<CreateKeyData>> {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
-      throw new UnauthorizedError();
+      throw new UnauthorizedError("Session not found");
+    }
+
+    const validation = apiKeySchema.safeParse(rawData);
+    if (!validation.success) {
+      return {
+        success: false,
+        error: "Invalid input data"
+      };
     }
 
     const result = await service.create({
-      name: data.name,
+      name: validation.data.name,
       userId: session.user.id,
-      expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+      expiresAt: validation.data.expiresAt ? new Date(validation.data.expiresAt) : null,
     });
 
     revalidatePath("/dashboard");
@@ -29,15 +43,16 @@ export async function createApiKeyAction(data: { name: string; expiresAt: string
       success: true,
       data: { value: result.value }
     };
+
   } catch (error: unknown) {
     if (isDomainError(error)) {
       return { success: false, error: error.message };
     }
-    return { success: false, error: "Failed to create key" };
+    return { success: false, error: "An unexpected error occurred" };
   }
 }
 
-export async function deleteApiKeyAction(id: string) {
+export async function deleteApiKeyAction(id: string): Promise<ActionResponse<void>> {
   try {
     const session = await auth();
 
@@ -49,7 +64,7 @@ export async function deleteApiKeyAction(id: string) {
 
     revalidatePath("/dashboard");
 
-    return { success: true };
+    return { success: true, data: undefined };
   } catch (error: unknown) {
     if (isDomainError(error)) {
       return { success: false, error: error.message };
