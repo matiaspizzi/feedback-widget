@@ -1,17 +1,51 @@
 services:
-  db:
-    platform: linux/amd64
-    image: postgres:latest
+  database:
+    image: postgres:16-alpine
+    container_name: feedback-db
     restart: always
+    # Cargamos el archivo para que tome POSTGRES_USER, etc.
+    env_file:
+      - .env
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      # Estos nombres son obligatorios para la imagen oficial de Postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # Actualizamos el test para que use las variables dinámicas
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web-app:
+    build:
+      context: .
+      target: web-runner
+      args:
+        - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+    container_name: feedback-web
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+    depends_on:
+      database:
+        condition: service_healthy
+
+  sdk-cdn:
+    build:
+      context: .
+      target: sdk-cdn
+    container_name: feedback-sdk-cdn
+    ports:
+      - "8080:80"
 
 volumes:
-  postgres_data:
-    driver: local
+  pgdata:
