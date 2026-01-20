@@ -1,35 +1,31 @@
 {
   "private": true,
-  "prisma": {
-    "schema": "packages/database/prisma/schema.prisma",
-    "seed": "tsx packages/database/src/seed.ts"
-  },
-  "scripts": {
-    "build": "turbo run build",
-    "db:migrate:deploy": "turbo run db:migrate:deploy",
-    "db:migrate:dev": "turbo run db:migrate:dev",
-    "db:migrate:reset": "turbo run db:migrate:reset",
-    "db:push": "turbo run db:push",
-    "db:seed": "turbo run db:seed",
-    "dev": "turbo run dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "generate": "turbo run generate",
-    "lint": "turbo run lint",
-    "setup": "pnpm install && pnpm turbo run db:generate && pnpm db:migrate:reset"
-  },
-  "devDependencies": {
-    "prettier": "^3.2.5",
-    "prisma": "latest",
-    "tsx": "4.19.1",
-    "turbo": "^2.7.4"
-  },
+  "name": "with-prisma",
+  "packageManager": "pnpm@9.15.1",
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@9.15.1",
-  "name": "with-prisma",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:generate": "turbo run db:generate",
+    "db:migrate:dev": "turbo run db:migrate:dev",
+    "db:migrate:deploy": "turbo run db:migrate:deploy",
+    "db:migrate:reset": "turbo run db:migrate:reset",
+    "db:push": "turbo run db:push",
+    "db:seed": "turbo run db:seed",
+    "setup": "pnpm install && pnpm db:generate"
+  },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "latest"
+    "@prisma/client": "7.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "prisma": "7.2.0",
+    "tsx": "4.19.1",
+    "turbo": "^2.7.4"
   }
 }

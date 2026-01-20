@@ -2,37 +2,66 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "globalEnv": [
-    "DATABASE_URL"
+    "DATABASE_URL",
+    "NODE_ENV"
   ],
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+    "db:generate": {
+      "inputs": [
+        "prisma/schema.prisma"
+      ],
+      "cache": true,
       "env": [
         "DATABASE_URL"
       ]
     },
+    "build": {
+      "dependsOn": [
+        "^build",
+        "db:generate"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "env": [
+        "DATABASE_URL",
+        "AUTH_SECRET",
+        "NEXTAUTH_URL"
+      ]
+    },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": [
+        "db:generate"
+      ]
     },
-    "lint": {},
-    "db:generate": {
-      "cache": false
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ]
     },
-    "db:migrate": {
+    "db:migrate:dev": {
       "cache": false,
-      "persistent": true
+      "interactive": true
+    },
+    "db:migrate:deploy": {
+      "cache": false
     },
     "db:migrate:reset": {
       "cache": false
     },
-    "db:deploy": {
-      "cache": false
-    },
     "db:push": {
-      "cache": false
+      "cache": false,
+      "inputs": [
+        "prisma/schema.prisma"
+      ]
     },
     "db:seed": {
       "cache": false
