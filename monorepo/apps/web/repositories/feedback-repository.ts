@@ -2,7 +2,7 @@ import { db, Prisma } from "@repo/database";
 import {
   NotFoundError,
   DatabaseError,
-  PRISMA_NOT_FOUND_ERROR
+  PRISMA_NOT_FOUND_ERROR,
 } from "@lib/errors";
 
 export class FeedbackRepository {
@@ -20,7 +20,7 @@ export class FeedbackRepository {
     try {
       return await db.feedback.findMany({
         where: filter,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw new DatabaseError("Error retrieving filtered feedback");
@@ -43,7 +43,10 @@ export class FeedbackRepository {
         where: { id },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_NOT_FOUND_ERROR) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_NOT_FOUND_ERROR
+      ) {
         throw new NotFoundError("Feedback");
       }
       throw new DatabaseError("Failed to delete feedback record");

@@ -15,7 +15,9 @@ interface CreateKeyData {
   value: string;
 }
 
-export async function createApiKeyAction(rawData: unknown): Promise<ActionResponse<CreateKeyData>> {
+export async function createApiKeyAction(
+  rawData: unknown,
+): Promise<ActionResponse<CreateKeyData>> {
   try {
     const session = await auth();
 
@@ -35,22 +37,23 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
     const result = await service.create({
       name: validation.data.name,
       userId: session.user.id,
-      expiresAt: validation.data.expiresAt ? new Date(validation.data.expiresAt) : null,
+      expiresAt: validation.data.expiresAt
+        ? new Date(validation.data.expiresAt)
+        : null,
     });
 
     revalidatePath("/dashboard");
 
     return {
       success: true,
-      data: { value: result.value }
+      data: { value: result.value },
     };
-
   } catch (error: unknown) {
     if (isDomainError(error)) {
       return {
         success: false,
         error: error.message,
-        details: error.details as Record<string, string[]> | undefined
+        details: error.details as Record<string, string[]> | undefined,
       };
     }
 
@@ -59,7 +62,9 @@ export async function createApiKeyAction(rawData: unknown): Promise<ActionRespon
   }
 }
 
-export async function deleteApiKeyAction(id: string): Promise<ActionResponse<void>> {
+export async function deleteApiKeyAction(
+  id: string,
+): Promise<ActionResponse<void>> {
   try {
     const session = await auth();
     if (!session?.user?.id) throw new UnauthorizedError();
@@ -70,7 +75,11 @@ export async function deleteApiKeyAction(id: string): Promise<ActionResponse<voi
     return { success: true, data: undefined };
   } catch (error: unknown) {
     if (isDomainError(error)) {
-      return { success: false, error: error.message, details: error.details as Record<string, string[]> | undefined };
+      return {
+        success: false,
+        error: error.message,
+        details: error.details as Record<string, string[]> | undefined,
+      };
     }
     return { success: false, error: "Failed to delete key" };
   }

@@ -1,14 +1,14 @@
-import './style.css';
-import { FeedbackSDK } from './index';
+import "./style.css";
+import { FeedbackSDK } from "./index";
 
 const DEFAULTS = {
-  projectId: 'demo-project-id',
-  apiKey: 'demo-api-key',
-  apiUrl: 'http://localhost:3000'
+  projectId: "demo-project-id",
+  apiKey: "demo-api-key",
+  apiUrl: "http://localhost:3000",
 };
 
 const renderApp = () => {
-  const app = document.querySelector<HTMLDivElement>('#app')!;
+  const app = document.querySelector<HTMLDivElement>("#app")!;
   app.innerHTML = `
     <div class="config-card">
       <h1>SDK Live Config</h1>
@@ -41,10 +41,10 @@ const renderApp = () => {
 
 const updateSDK = () => {
   const config = {
-    projectId: (document.querySelector('#projectId') as HTMLInputElement).value,
-    apiKey: (document.querySelector('#apiKey') as HTMLInputElement).value,
+    projectId: (document.querySelector("#projectId") as HTMLInputElement).value,
+    apiKey: (document.querySelector("#apiKey") as HTMLInputElement).value,
     apiUrl: DEFAULTS.apiUrl,
-    debug: true
+    debug: true,
   };
 
   FeedbackSDK.destroy();
@@ -52,19 +52,21 @@ const updateSDK = () => {
 };
 
 const setupListeners = () => {
-  const projectIdInput = document.querySelector('#projectId') as HTMLInputElement;
-  const apiKeyInput = document.querySelector('#apiKey') as HTMLInputElement;
-  const resetBtn = document.querySelector('#reset-btn') as HTMLButtonElement;
+  const projectIdInput = document.querySelector(
+    "#projectId",
+  ) as HTMLInputElement;
+  const apiKeyInput = document.querySelector("#apiKey") as HTMLInputElement;
+  const resetBtn = document.querySelector("#reset-btn") as HTMLButtonElement;
 
   updateSDK();
 
-  [projectIdInput, apiKeyInput].forEach(input => {
-    input.addEventListener('input', () => {
+  [projectIdInput, apiKeyInput].forEach((input) => {
+    input.addEventListener("input", () => {
       updateSDK();
     });
   });
 
-  resetBtn.addEventListener('click', () => {
+  resetBtn.addEventListener("click", () => {
     projectIdInput.value = DEFAULTS.projectId;
     apiKeyInput.value = DEFAULTS.apiKey;
     updateSDK();

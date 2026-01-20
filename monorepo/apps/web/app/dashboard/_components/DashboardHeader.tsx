@@ -1,5 +1,5 @@
-import Link from "next/link"
-import "./DashboardHeader.css"
+import Link from "next/link";
+import "./DashboardHeader.css";
 
 export function DashboardHeader() {
   return (
@@ -11,5 +11,5 @@ export function DashboardHeader() {
         Home
       </Link>
     </header>
-  )
+  );
 }

@@ -9,14 +9,14 @@ export interface AuthState {
 
 export type ActionResponse<T = void> =
   | {
-    success: true;
-    data: T;
-    error?: never;
-    details?: never
-  }
+      success: true;
+      data: T;
+      error?: never;
+      details?: never;
+    }
   | {
-    success: false;
-    data?: never;
-    error: string;
-    details?: Record<string, string[]>;
-  };
+      success: false;
+      data?: never;
+      error: string;
+      details?: Record<string, string[]>;
+    };

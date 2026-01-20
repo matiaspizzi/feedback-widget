@@ -1,5 +1,5 @@
-import { sdk } from './core/feedback-sdk';
-import './ui/widget';
+import { sdk } from "./core/feedback-sdk";
+import "./ui/widget";
 
 const FeedbackSDK = {
   init: sdk.init.bind(sdk),
@@ -9,6 +9,6 @@ const FeedbackSDK = {
 
 export { FeedbackSDK };
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   (window as any).FeedbackSDK = FeedbackSDK;
 }

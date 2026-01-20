@@ -2,7 +2,7 @@ import { db, Prisma } from "@repo/database";
 import {
   UniqueConstraintError,
   DatabaseError,
-  PRISMA_UNIQUE_KEY_ERROR
+  PRISMA_UNIQUE_KEY_ERROR,
 } from "@lib/errors";
 
 export class UserRepository {
@@ -32,7 +32,10 @@ export class UserRepository {
         data,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_UNIQUE_KEY_ERROR) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_UNIQUE_KEY_ERROR
+      ) {
         throw new UniqueConstraintError("User", "email");
       }
       throw new DatabaseError("Failed to create user account record");

@@ -13,8 +13,6 @@ export default async function DashboardPage() {
   const initialKeys = await repository.getAllByUserId(session.user.id);
 
   return (
-    <DashboardClient
-      initialKeys={JSON.parse(JSON.stringify(initialKeys))}
-    />
+    <DashboardClient initialKeys={JSON.parse(JSON.stringify(initialKeys))} />
   );
 }

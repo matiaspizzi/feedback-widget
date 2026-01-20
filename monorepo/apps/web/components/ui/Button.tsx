@@ -1,21 +1,20 @@
-import React from 'react';
-import styles from './Button.module.css';
+import React from "react";
+import styles from "./Button.module.css";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'quaternary';
+  variant?: "primary" | "secondary" | "tertiary" | "quaternary";
   isLoading?: boolean;
 }
 
 export const Button = ({
   label,
-  variant = 'primary',
+  variant = "primary",
   isLoading = false,
   disabled,
-  className = '',
+  className = "",
   ...props
 }: ButtonProps) => {
-
   const variantClass = styles[variant];
 
   return (

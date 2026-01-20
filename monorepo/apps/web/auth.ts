@@ -1,15 +1,17 @@
-import NextAuth from "next-auth"
-import type { NextAuthConfig, NextAuthResult } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { verifyPassword } from "@lib/password"
-import { db } from "@repo/database"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { loginSchema } from "@repo/shared"
-import { UserRepository } from "@repositories"
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { verifyPassword } from "@lib/password";
+import { db } from "@repo/database";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { loginSchema } from "@repo/shared";
+import { UserRepository } from "@repositories";
+import { authConfig } from "./auth.config";
 
 const userRepository = new UserRepository();
 
-const authConfig: NextAuthConfig = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
+  trustHost: true,
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   logger: {
@@ -28,20 +30,16 @@ const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        const validatedFields = loginSchema.safeParse(credentials)
+        const validatedFields = loginSchema.safeParse(credentials);
 
         if (!validatedFields.success) return null;
 
         const { email, password } = validatedFields.data;
-
         const user = await userRepository.getByEmail(email);
 
         if (!user || !user.password) return null;
 
-        const isPasswordCorrect = await verifyPassword(
-          password,
-          user.password
-        );
+        const isPasswordCorrect = await verifyPassword(password, user.password);
 
         if (!isPasswordCorrect) return null;
 
@@ -53,28 +51,19 @@ const authConfig: NextAuthConfig = {
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-  },
   callbacks: {
+    ...authConfig.callbacks,
     jwt({ token, user }) {
       if (user) {
-        token.id = user.id
+        token.id = user.id;
       }
-      return token
+      return token;
     },
     session({ session, token }) {
       if (session.user && token.id) {
-        session.user.id = token.id as string
+        session.user.id = token.id as string;
       }
-      return session
+      return session;
     },
   },
-}
-
-const result = NextAuth(authConfig)
-
-export const handlers: NextAuthResult["handlers"] = result.handlers
-export const auth: NextAuthResult["auth"] = result.auth
-export const signIn: NextAuthResult["signIn"] = result.signIn
-export const signOut: NextAuthResult["signOut"] = result.signOut
+});

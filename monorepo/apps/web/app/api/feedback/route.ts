@@ -13,7 +13,10 @@ export async function POST(req: NextRequest) {
     const deps = getFeedbackDeps();
     const feedback = await deps.feedbackService.create({ ...data, userId });
 
-    return NextResponse.json({ success: true, data: feedback }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: feedback },
+      { status: 201 },
+    );
   } catch (error) {
     return toResponse(error);
   }

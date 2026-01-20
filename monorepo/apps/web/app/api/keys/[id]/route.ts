@@ -5,7 +5,7 @@ import { getApiKeyDeps } from "@lib/deps";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const userId = await validateUserOrKey(req);

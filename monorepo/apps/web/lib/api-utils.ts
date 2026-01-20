@@ -26,12 +26,18 @@ export async function validateUserOrKey(req: Request): Promise<string> {
   throw new UnauthorizedError("Authentication required: Session or API Key");
 }
 
-export async function validateSchema<T>(req: Request, schema: z.ZodSchema<T>): Promise<T> {
+export async function validateSchema<T>(
+  req: Request,
+  schema: z.ZodSchema<T>,
+): Promise<T> {
   const json = await req.json();
   const result = schema.safeParse(json);
 
   if (!result.success) {
-    throw new BadRequestError("Invalid payload", result.error.flatten().fieldErrors);
+    throw new BadRequestError(
+      "Invalid payload",
+      result.error.flatten().fieldErrors,
+    );
   }
 
   return result.data;

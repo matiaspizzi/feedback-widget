@@ -7,22 +7,22 @@ export function toResponse(error: unknown): NextResponse {
       {
         success: false,
         error: error.message,
-        ...(error.details ? { details: error.details } : {})
+        ...(error.details ? { details: error.details } : {}),
       },
-      { status: error.status }
+      { status: error.status },
     );
   }
 
   if (error instanceof SyntaxError) {
     return NextResponse.json(
       { success: false, error: "Invalid JSON format" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   console.error("[SERVER_ERROR]:", error);
   return NextResponse.json(
     { success: false, error: "Internal Server Error" },
-    { status: 500 }
+    { status: 500 },
   );
 }

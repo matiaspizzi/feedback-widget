@@ -1,5 +1,5 @@
-import { sdk } from '../core/feedback-sdk';
-import styles from './widget.css?inline';
+import { sdk } from "../core/feedback-sdk";
+import styles from "./widget.css?inline";
 
 export class FeedbackWidget extends HTMLElement {
   private shadow: ShadowRoot | null = null;
@@ -12,18 +12,18 @@ export class FeedbackWidget extends HTMLElement {
 
   constructor() {
     super();
-    this.shadow = this.attachShadow({ mode: 'open' });
+    this.shadow = this.attachShadow({ mode: "open" });
     this.boundExternalClickListener = this.handleExternalClick.bind(this);
   }
 
   connectedCallback() {
     if (!this.shadow) return;
     this.render();
-    window.addEventListener('click', this.boundExternalClickListener);
+    window.addEventListener("click", this.boundExternalClickListener);
   }
 
   disconnectedCallback() {
-    window.removeEventListener('click', this.boundExternalClickListener);
+    window.removeEventListener("click", this.boundExternalClickListener);
   }
 
   private handleExternalClick(e: MouseEvent) {
@@ -48,7 +48,7 @@ export class FeedbackWidget extends HTMLElement {
 
   private showError(message: string) {
     if (!this.shadow) return;
-    const errorEl = this.shadow.querySelector('.error-message');
+    const errorEl = this.shadow.querySelector(".error-message");
     if (errorEl) errorEl.textContent = message;
   }
 
@@ -57,11 +57,15 @@ export class FeedbackWidget extends HTMLElement {
     if (this.isSubmitting) return;
 
     const form = e.target as HTMLFormElement;
-    const ratingInput = form.querySelector('input[name="rating"]:checked') as HTMLInputElement;
-    const commentInput = form.querySelector('textarea[name="comment"]') as HTMLTextAreaElement;
+    const ratingInput = form.querySelector(
+      'input[name="rating"]:checked',
+    ) as HTMLInputElement;
+    const commentInput = form.querySelector(
+      'textarea[name="comment"]',
+    ) as HTMLTextAreaElement;
 
     if (!ratingInput) {
-      this.showError('Please select a rating');
+      this.showError("Please select a rating");
       return;
     }
 
@@ -69,7 +73,10 @@ export class FeedbackWidget extends HTMLElement {
       this.isSubmitting = true;
       this.updateSubmitButtonState();
 
-      await sdk.submitFeedback(parseInt(ratingInput.value), commentInput.value.trim());
+      await sdk.submitFeedback(
+        parseInt(ratingInput.value),
+        commentInput.value.trim(),
+      );
 
       this.isSuccess = true;
       this.isSubmitting = false;
@@ -82,25 +89,29 @@ export class FeedbackWidget extends HTMLElement {
   }
 
   private updateSubmitButtonState() {
-    const btn = this.shadow?.querySelector('.submit-btn') as HTMLButtonElement;
+    const btn = this.shadow?.querySelector(".submit-btn") as HTMLButtonElement;
     if (!btn) return;
     btn.disabled = this.isSubmitting || this._rating === null;
-    btn.textContent = this.isSubmitting ? 'Sending...' : 'Send Feedback';
+    btn.textContent = this.isSubmitting ? "Sending..." : "Send Feedback";
   }
 
   private setupEventListeners() {
     if (!this.shadow) return;
-    this.shadow.querySelector('.fab')?.addEventListener('click', (e) => {
+    this.shadow.querySelector(".fab")?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.toggleModal();
     });
 
-    this.shadow.querySelector('.close-btn')?.addEventListener('click', () => this.toggleModal());
+    this.shadow
+      .querySelector(".close-btn")
+      ?.addEventListener("click", () => this.toggleModal());
 
     if (!this.isSuccess) {
-      this.shadow.querySelector('form')?.addEventListener('submit', (e) => this.handleSubmit(e));
-      this.shadow.querySelectorAll('input[name="rating"]').forEach(input => {
-        input.addEventListener('change', (e) => {
+      this.shadow
+        .querySelector("form")
+        ?.addEventListener("submit", (e) => this.handleSubmit(e));
+      this.shadow.querySelectorAll('input[name="rating"]').forEach((input) => {
+        input.addEventListener("change", (e) => {
           this._rating = parseInt((e.target as HTMLInputElement).value);
           this.updateSubmitButtonState();
         });
@@ -125,13 +136,17 @@ export class FeedbackWidget extends HTMLElement {
         <p class="subtitle">Tell us what you think!</p>
         <form>
           <div class="rating-group">
-            ${[5, 4, 3, 2, 1].map(num => `
-              <input type="radio" id="st${num}" name="rating" value="${num}" ${this._rating === num ? 'checked' : ''}>
+            ${[5, 4, 3, 2, 1]
+              .map(
+                (num) => `
+              <input type="radio" id="st${num}" name="rating" value="${num}" ${this._rating === num ? "checked" : ""}>
               <label for="st${num}">★</label>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
           <textarea name="comment" rows="4" placeholder="Optional comments..."></textarea>
-          <button type="submit" class="submit-btn" ${this._rating ? '' : 'disabled'}>Send Feedback</button>
+          <button type="submit" class="submit-btn" ${this._rating ? "" : "disabled"}>Send Feedback</button>
           <div class="error-message"></div>
         </form>
       `;
@@ -139,16 +154,16 @@ export class FeedbackWidget extends HTMLElement {
     this.shadow.innerHTML = `
       <style>${styles}</style>
       <div class="widget-container">
-        <div class="modal ${this.isOpen ? 'open' : ''}">
+        <div class="modal ${this.isOpen ? "open" : ""}">
           ${content}
         </div>
-        <button class="fab">${this.isOpen ? '×' : '★'}</button>
+        <button class="fab">${this.isOpen ? "×" : "★"}</button>
       </div>
     `;
     this.setupEventListeners();
   }
 }
 
-if (typeof window !== 'undefined' && !customElements.get('feedback-widget')) {
-  customElements.define('feedback-widget', FeedbackWidget);
+if (typeof window !== "undefined" && !customElements.get("feedback-widget")) {
+  customElements.define("feedback-widget", FeedbackWidget);
 }

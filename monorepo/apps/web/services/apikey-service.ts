@@ -1,10 +1,6 @@
 import { randomBytes } from "crypto";
 import { ApiKeyRepository } from "@repositories";
-import {
-  BadRequestError,
-  UnauthorizedError,
-  NotFoundError
-} from "@lib/errors";
+import { BadRequestError, UnauthorizedError, NotFoundError } from "@lib/errors";
 
 export class ApiKeyService {
   private readonly repository: ApiKeyRepository;
@@ -41,7 +37,11 @@ export class ApiKeyService {
     return { valid: true, apiKey };
   }
 
-  async create(data: { name: string; userId: string; expiresAt?: Date | null }) {
+  async create(data: {
+    name: string;
+    userId: string;
+    expiresAt?: Date | null;
+  }) {
     if (data.expiresAt && data.expiresAt < new Date()) {
       throw new BadRequestError("The expiration date cannot be in the past.");
     }
@@ -66,7 +66,9 @@ export class ApiKeyService {
     }
 
     if (apiKey.userId !== userId) {
-      throw new UnauthorizedError("You do not have permission to delete this key");
+      throw new UnauthorizedError(
+        "You do not have permission to delete this key",
+      );
     }
 
     return this.repository.deleteById(id);

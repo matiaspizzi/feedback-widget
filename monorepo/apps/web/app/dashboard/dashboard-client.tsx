@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { DashboardHeader } from "./_components/DashboardHeader";
@@ -31,10 +31,7 @@ export default function DashboardClient({ initialKeys }: DashboardClientProps) {
             <p>Manage your keys to access the Feedback Widget API.</p>
           </div>
 
-          <Button
-            label="Create New Key"
-            onClick={() => setIsModalOpen(true)}
-          />
+          <Button label="Create New Key" onClick={() => setIsModalOpen(true)} />
         </div>
 
         <ApiKeyTable apiKeys={initialKeys} />

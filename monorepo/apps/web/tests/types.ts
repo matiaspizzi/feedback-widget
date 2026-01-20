@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export interface MockOptions<T> {
   deps: T;
@@ -8,5 +8,5 @@ export interface MockOptions<T> {
 export type MockHandler<T> = (
   req: NextRequest,
   options: MockOptions<T>,
-  context: unknown
+  context: unknown,
 ) => Promise<NextResponse>;

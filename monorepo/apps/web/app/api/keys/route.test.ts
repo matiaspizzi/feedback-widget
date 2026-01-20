@@ -62,7 +62,9 @@ describe("Keys Root API Endpoint", () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi.mocked(apiUtils.validateSchema).mockImplementation(async () => {
       throw new BadRequestError("Invalid payload", {
-        name: ["Name can only contain letters, numbers, hyphens and underscores"]
+        name: [
+          "Name can only contain letters, numbers, hyphens and underscores",
+        ],
       });
     });
     const req = new NextRequest("http://localhost/api/keys", {
@@ -76,13 +78,15 @@ describe("Keys Root API Endpoint", () => {
     expect(response.status).toBe(400);
     expect(json.error).toBe("Invalid payload");
     expect(json.details.name[0]).toBe(
-      "Name can only contain letters, numbers, hyphens and underscores"
+      "Name can only contain letters, numbers, hyphens and underscores",
     );
   });
 
   it("POST: debe fallar si el JSON es malformado", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
-    vi.mocked(apiUtils.validateSchema).mockRejectedValue(new SyntaxError("Unexpected token i in JSON"));
+    vi.mocked(apiUtils.validateSchema).mockRejectedValue(
+      new SyntaxError("Unexpected token i in JSON"),
+    );
     const req = new NextRequest("http://localhost/api/keys", {
       method: "POST",
       body: "invalid-json",

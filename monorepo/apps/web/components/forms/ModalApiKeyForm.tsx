@@ -1,34 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Modal, Button, Input } from "@components/ui"
-import "./ModalApiKeyForm.css"
-import { ActionResponse } from "@actions/types"
+import { useState } from "react";
+import { Modal, Button, Input } from "@components/ui";
+import "./ModalApiKeyForm.css";
+import { ActionResponse } from "@actions/types";
 
 interface ModalApiKeyFormProps {
-  isOpen: boolean
-  onClose: () => void
-  onCreateKey: (name: string, expiresAt: string | null) => Promise<ActionResponse<{ value: string }>>
+  isOpen: boolean;
+  onClose: () => void;
+  onCreateKey: (
+    name: string,
+    expiresAt: string | null,
+  ) => Promise<ActionResponse<{ value: string }>>;
 }
 
-export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFormProps) => {
-  const [name, setName] = useState("")
-  const [expiry, setExpiry] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export const ModalApiKeyForm = ({
+  isOpen,
+  onClose,
+  onCreateKey,
+}: ModalApiKeyFormProps) => {
+  const [name, setName] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
-  const [generalError, setGeneralError] = useState<string | null>(null)
-  const [createdKey, setCreatedKey] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
+  const [createdKey, setCreatedKey] = useState<string | null>(null);
 
   const handleReset = () => {
-    setName("")
-    setExpiry("")
-    setCreatedKey(null)
-    setFieldErrors({})
-    setGeneralError(null)
-    setIsSubmitting(false)
-    onClose()
-  }
+    setName("");
+    setExpiry("");
+    setCreatedKey(null);
+    setFieldErrors({});
+    setGeneralError(null);
+    setIsSubmitting(false);
+    onClose();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,11 +57,11 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
   };
 
   const copyToClipboard = () => {
-    if (createdKey) navigator.clipboard.writeText(createdKey)
-  }
+    if (createdKey) navigator.clipboard.writeText(createdKey);
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={createdKey ? () => { } : handleReset}>
+    <Modal isOpen={isOpen} onClose={createdKey ? () => {} : handleReset}>
       <div className="api-key-container">
         {!createdKey ? (
           <form onSubmit={handleSubmit} className="api-key-form">
@@ -94,7 +101,7 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
               />
               <Button
                 isLoading={isSubmitting}
-                label={isSubmitting ? 'Creating...' : 'Add'}
+                label={isSubmitting ? "Creating..." : "Add"}
                 onClick={handleSubmit}
                 variant="primary"
               />
@@ -109,16 +116,16 @@ export const ModalApiKeyForm = ({ isOpen, onClose, onCreateKey }: ModalApiKeyFor
             </p>
             <div className="key-display">
               <code>{createdKey}</code>
-              <Button onClick={copyToClipboard} label="Copy" variant="quaternary" />
+              <Button
+                onClick={copyToClipboard}
+                label="Copy"
+                variant="quaternary"
+              />
             </div>
-            <Button
-              label="Continue"
-              onClick={handleReset}
-              variant="primary"
-            />
+            <Button label="Continue" onClick={handleReset} variant="primary" />
           </div>
         )}
       </div>
     </Modal>
-  )
-}
+  );
+};

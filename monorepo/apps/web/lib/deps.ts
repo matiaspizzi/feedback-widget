@@ -1,4 +1,8 @@
-import { FeedbackRepository, ApiKeyRepository, UserRepository } from "@repositories";
+import {
+  FeedbackRepository,
+  ApiKeyRepository,
+  UserRepository,
+} from "@repositories";
 import { FeedbackService, UserService, ApiKeyService } from "@services";
 
 export const getFeedbackDeps = () => ({

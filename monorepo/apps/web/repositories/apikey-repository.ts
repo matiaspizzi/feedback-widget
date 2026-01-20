@@ -4,7 +4,7 @@ import {
   DatabaseError,
   NotFoundError,
   PRISMA_NOT_FOUND_ERROR,
-  PRISMA_UNIQUE_KEY_ERROR
+  PRISMA_UNIQUE_KEY_ERROR,
 } from "@lib/errors";
 
 export class ApiKeyRepository {
@@ -28,7 +28,10 @@ export class ApiKeyRepository {
     }
   }
 
-  async getWithFilters(filter: Prisma.ApiKeyWhereInput, orderBy?: Prisma.ApiKeyOrderByWithRelationInput) {
+  async getWithFilters(
+    filter: Prisma.ApiKeyWhereInput,
+    orderBy?: Prisma.ApiKeyOrderByWithRelationInput,
+  ) {
     try {
       return await db.apiKey.findMany({
         where: filter,
@@ -47,7 +50,10 @@ export class ApiKeyRepository {
     try {
       return await db.apiKey.create({ data });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_UNIQUE_KEY_ERROR) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_UNIQUE_KEY_ERROR
+      ) {
         throw new UniqueConstraintError("API Key", "name");
       }
       throw new DatabaseError("Error creating API Key record");
@@ -60,7 +66,10 @@ export class ApiKeyRepository {
         where: { id },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === PRISMA_NOT_FOUND_ERROR) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_NOT_FOUND_ERROR
+      ) {
         throw new NotFoundError("API Key");
       }
       throw new DatabaseError("Failed to delete API Key record");

@@ -1,12 +1,11 @@
-
-export const PRISMA_UNIQUE_KEY_ERROR = 'P2002';
-export const PRISMA_NOT_FOUND_ERROR = 'P2025';
+export const PRISMA_UNIQUE_KEY_ERROR = "P2002";
+export const PRISMA_NOT_FOUND_ERROR = "P2025";
 
 export class DomainError extends Error {
   constructor(
     public message: string,
     public status: number = 400,
-    public details?: Record<string, string[] | undefined>
+    public details?: Record<string, string[] | undefined>,
   ) {
     super(message);
     this.name = this.constructor.name;
