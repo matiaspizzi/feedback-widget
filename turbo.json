@@ -3,17 +3,19 @@
   "ui": "tui",
   "globalEnv": [
     "DATABASE_URL",
-    "NODE_ENV"
+    "NODE_ENV",
+    "AUTH_SECRET",
+    "NEXTAUTH_URL",
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_DB"
   ],
   "tasks": {
     "db:generate": {
       "inputs": [
         "prisma/schema.prisma"
       ],
-      "cache": true,
-      "env": [
-        "DATABASE_URL"
-      ]
+      "cache": true
     },
     "build": {
       "dependsOn": [
@@ -22,17 +24,12 @@
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
-        ".env*"
+        ".env"
       ],
       "outputs": [
         "dist/**",
         ".next/**",
         "!.next/cache/**"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "AUTH_SECRET",
-        "NEXTAUTH_URL"
       ]
     },
     "dev": {

@@ -3,11 +3,9 @@ services:
     image: postgres:16-alpine
     container_name: feedback-db
     restart: always
-    # Cargamos el archivo para que tome POSTGRES_USER, etc.
     env_file:
       - .env
     environment:
-      # Estos nombres son obligatorios para la imagen oficial de Postgres
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -16,7 +14,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      # Actualizamos el test para que use las variables dinámicas
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s

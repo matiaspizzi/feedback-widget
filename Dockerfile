@@ -1,5 +1,5 @@
 ##################
-##    PRUNE     ##
+##     PRUNE    ##
 ##################
 FROM node:20-alpine AS pruner
 RUN apk add --no-cache libc6-compat

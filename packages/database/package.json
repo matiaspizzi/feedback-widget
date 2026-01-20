@@ -6,11 +6,11 @@
   },
   "scripts": {
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:push": "prisma db push",
-    "db:reset": "prisma migrate reset --force",
-    "db:format": "prisma format",
+    "db:migrate:dev": "prisma migrate dev --schema=./prisma/schema.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema=./prisma/schema.prisma",
+    "db:migrate:reset": "prisma migrate reset --force --schema=./prisma/schema.prisma",
+    "db:push": "prisma db push --schema=./prisma/schema.prisma",
+    "db:format": "prisma format --schema=./prisma/schema.prisma",
     "db:seed": "tsx ./src/seed.ts",
     "lint": "eslint . --max-warnings 0"
   },
