@@ -9,15 +9,13 @@
   <script type="module">
     import { FeedbackSDK } from 'http://localhost:8080/feedback-sdk.es.js';
 
-    const config = {
-      projectId: 'project-esm-demo',
-      apiKey: 'fk_0ad555a0f22b3a4dbb63842b3e028a81df09905eb722a709',
-      apiUrl: 'http://localhost:3000',
-      debug: true
-    };
-
     try {
-      FeedbackSDK.init(config);
+      FeedbackSDK.init({
+        projectId: 'project-esm-demo',
+        apiKey: 'fk_9812a9612879c1035f978b2cc8753891ffb514c4b472d6bb',
+        apiUrl: 'http://localhost:3000',
+        debug: true
+      });
       console.log("Widget initialized successfully");
     } catch (error) {
       console.error("Failed to load feedback widget", error);
