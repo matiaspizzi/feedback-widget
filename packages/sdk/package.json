@@ -16,7 +16,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "@repo/shared": "workspace:*",

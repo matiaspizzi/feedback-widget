@@ -28,7 +28,7 @@ describe("Keys Root API Endpoint", () => {
 
   const userId = "user_123";
 
-  it("POST: debe crear una llave con expiresAt correctamente parseado", async () => {
+  it("POST: should create key with expiresAt correctly parsed", async () => {
     const futureDate = "2028-01-01T00:00:00.000Z";
     const payload = { name: "Prod_Key", expiresAt: futureDate };
 
@@ -57,7 +57,7 @@ describe("Keys Root API Endpoint", () => {
     );
   });
 
-  it("POST: debe fallar si el nombre es inválido", async () => {
+  it("POST: should fail if name is invalid", async () => {
     const payload = { name: "$ %" };
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi.mocked(apiUtils.validateSchema).mockImplementation(async () => {
@@ -82,7 +82,7 @@ describe("Keys Root API Endpoint", () => {
     );
   });
 
-  it("POST: debe fallar si el JSON es malformado", async () => {
+  it("POST: should fail if JSON is malformed", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi.mocked(apiUtils.validateSchema).mockRejectedValue(
       new SyntaxError("Unexpected token i in JSON"),

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { GET } from "./route";
 
 describe("Health Check", () => {
-  it("debe retornar status ok", async () => {
+  it("should return status ok", async () => {
     const response = await GET();
     const data = await response.json();
 

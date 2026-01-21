@@ -9,8 +9,32 @@ A full-stack feedback widget solution featuring a lightweight SDK (Web Component
 - Node.js 18+
 - pnpm (recommended) or npm/yarn
 - PostgreSQL Database (local or remote)
+- Docker & docker-compose (optional)
+
+---
 
 ### Installation
+
+***Before starting, copy `.env.example` to `.env` and update all variables.***
+
+There are 2 options to start the app: Using Docker or manually running the app.
+
+### Using Docker
+
+1.  **Build & Run:**
+
+    ```bash
+    docker-compose up --build
+    ```
+
+2.  **Setup Database:**
+    Run migrations:
+
+    ```bash
+    docker exec -it feedback-web npx prisma migrate deploy --schema=./packages/database/prisma/schema.prisma --config=./packages/database/prisma.config.ts
+    ```
+
+### Manually running the app
 
 1.  **Install dependencies:**
 
@@ -19,8 +43,7 @@ A full-stack feedback widget solution featuring a lightweight SDK (Web Component
     ```
 
 2.  **Setup Database:**
-    Copy `.env.example` to `packages/database/.env` and `apps/web/.env` and update `DATABASE_URL`.
-    Then run migrations:
+    Run migrations:
 
     ```bash
     pnpm db:migrate:dev
@@ -32,77 +55,77 @@ A full-stack feedback widget solution featuring a lightweight SDK (Web Component
     pnpm dev
     ```
 
-    - Web App (Backend + Demo): http://localhost:3000
-    - API Health Check: http://localhost:3000/api/health
-
+---
 ## 🛠 Usage
+
+Running the repo with Docker will start an nginx server at `http://localhost:8080` and a node server at `http://localhost:3000`.
+
+The nginx server will serve the SDK files at `http://localhost:8080/feedback-sdk.umd.js` and `http://localhost:8080/feedback-sdk.es.js`.
 
 ### Using the SDK via Script Tag (CDN Simulation)
 
 Once built, you can include the script in your HTML:
 
 ```html
-<script type="module" src="http://localhost:3000/feedback-sdk.es.js"></script>
-<script>
-  window.onload = () => {
-    FeedbackSDK.init({
-      projectId: "my-project-id",
-      apiKey: "my-secret-key",
-      apiUrl: "http://localhost:3000",
+<head>
+  <title>CDN Test</title>
+  <script src="http://localhost:8080/feedback-sdk.umd.js" defer></script>
+</head>
+
+<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      FeedbackSDK.init({
+        projectId: 'demo-123',
+        apiKey: 'fk_9812a9612879c1035f978b2cc8753891ffb514c4b472d6bb',
+        apiUrl: 'http://localhost:3000',
+        debug: true
+      });
     });
-  };
-</script>
-<feedback-widget />
+  </script>
+</body>
 ```
 
-### Using via NPM Import
+### Using the SDK via Import
 
-```typescript
-import "@repo/sdk"; // Registers the web component
-import { FeedbackSDK } from "@repo/sdk";
+```html
+<head>
+  <title>ESM Test</title>
+</head>
 
-FeedbackSDK.init({
-  projectId: "123",
-  apiKey: "key",
-  apiUrl: "https://api.example.com",
-});
+<body>
+  <script type="module">
+    import { FeedbackSDK } from 'http://localhost:8080/feedback-sdk.es.js';
 
-// Use <feedback-widget /> in your JSX/HTML
+    try {
+      FeedbackSDK.init({
+        projectId: 'project-esm-demo',
+        apiKey: 'fk_9812a9612879c1035f978b2cc8753891ffb514c4b472d6bb',
+        apiUrl: 'http://localhost:3000',
+        debug: true
+      });
+      console.log("Widget initialized successfully");
+    } catch (error) {
+      console.error("Failed to load feedback widget", error);
+    }
+  </script>
+</body>
 ```
-
+---
 ## 🧪 Testing
 
-### API Endpoints
+  **Run Tests:**
 
-You can test the API using `curl` or Postman.
+  ```bash
+  pnpm test
+  ```
 
-**Health Check:**
-
-```bash
-curl http://localhost:3000/api/health
-# {"status":"ok"}
-```
-
-**Submit Feedback:**
-
-```bash
-curl -X POST http://localhost:3000/api/feedback \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer FEEDBACK_API_KEY" \
-  -d '{
-    "projectId": "test-project",
-    "userId": "user-123",
-    "rating": 5,
-    "comment": "Great widget!"
-  }'
-```
+  tip: You can use `--filter @repo/<web|sdk>` to run tests for a specific repo.
 
 ---
 
-## 🏗 Architecture Decision Record (ADR-001)
+## 🏗 Architecture Decision Record (ADR)
 
-**Status:** Accepted  
-**Date:** 2026-01-15
 
 ### Context
 
@@ -120,12 +143,9 @@ The goal is to provide an embeddable feedback widget and an API to collect data.
 
 #### 3. Backend: Next.js API Routes
 
-**Justification:** Simplifies infrastructure by combining the backend and the demo page into a single deployable unit. Leverages Next.js server optimizations and facilitates type validation with TypeScript.
+**Justification:** Simplifies infrastructure by combining the backend and the client into a single deployable unit. Leverages Next.js server optimizations and facilitates type validation with TypeScript.
 
-#### 4. Database: PostgreSQL + Prisma
 
-**Justification:** Uses robust relational database storage. Prisma offers type-safety in database queries, aligning with our strict TypeScript practices. _Note: Original plan considered SQLite, but PostgreSQL was retained for robustness._
-
-#### 5. Data Contract: Zod (Shared Package)
+#### 4. Data Contract: Zod (Shared Package)
 
 **Justification:** Validation schemas are defined in a shared package. This ensures that both Frontend (SDK) and Backend validate against the same source of truth, rejecting invalid payloads on both client and server.

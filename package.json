@@ -14,7 +14,8 @@
     "db:migrate:reset": "dotenv -e .env -- turbo run db:migrate:reset",
     "db:push": "dotenv -e .env -- turbo run db:push",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",

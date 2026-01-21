@@ -34,7 +34,7 @@ describe("Feedback API Endpoint", () => {
     context: { url: "/home", userAgent: "Mozilla/5.0" },
   };
 
-  it("POST: debe crear un feedback exitosamente", async () => {
+  it("POST: should create feedback successfully", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
     vi.mocked(apiUtils.validateSchema).mockResolvedValue(validPayload);
     vi_mockFeedbackService.create.mockResolvedValue({ id: "fb_1" });
@@ -55,7 +55,7 @@ describe("Feedback API Endpoint", () => {
     expect(json.data.id).toBe("fb_1");
   });
 
-  it("POST: debe retornar 400 si el JSON es inválido", async () => {
+  it("POST: should return 400 if JSON is invalid", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
     vi.mocked(apiUtils.validateSchema).mockRejectedValue(new SyntaxError());
 
@@ -72,7 +72,7 @@ describe("Feedback API Endpoint", () => {
     expect(json.error).toBe("Invalid JSON format");
   });
 
-  it("POST: debe retornar 500 ante un error inesperado del sistema", async () => {
+  it("POST: should return 500 on unexpected error", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue("user_test_123");
     vi.mocked(apiUtils.validateSchema).mockResolvedValue(validPayload);
 

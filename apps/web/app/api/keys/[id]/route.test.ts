@@ -28,7 +28,7 @@ describe("Keys [id] DELETE Endpoint", () => {
   const userId = "user_123";
   const keyId = "k1";
 
-  it("debe retornar 204 al eliminar exitosamente", async () => {
+  it("should return 204 on successful deletion", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi_mockApiKeyService.delete.mockResolvedValue(undefined);
 
@@ -41,7 +41,7 @@ describe("Keys [id] DELETE Endpoint", () => {
     expect(vi_mockApiKeyService.delete).toHaveBeenCalledWith(keyId, userId);
   });
 
-  it("debe retornar 404 si el servicio lanza NotFoundError", async () => {
+  it("should return 404 if service throws NotFoundError", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi_mockApiKeyService.delete.mockRejectedValue(new NotFoundError("API Key"));
 
@@ -57,7 +57,7 @@ describe("Keys [id] DELETE Endpoint", () => {
     expect(json.error).toContain("not found");
   });
 
-  it("debe retornar 401 si el servicio lanza UnauthorizedError", async () => {
+  it("should return 401 if service throws UnauthorizedError", async () => {
     vi.mocked(apiUtils.validateUserOrKey).mockResolvedValue(userId);
     vi_mockApiKeyService.delete.mockRejectedValue(
       new UnauthorizedError("Ownership mismatch"),
