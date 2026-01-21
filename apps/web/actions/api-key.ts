@@ -1,15 +1,14 @@
 "use server";
 
-import { ApiKeyService } from "@services";
-import { ApiKeyRepository } from "@repositories";
 import { auth } from "@auth";
 import { revalidatePath } from "next/cache";
 import { isDomainError, UnauthorizedError } from "@lib/errors";
 import { apiKeySchema } from "@repo/shared";
 import { ActionResponse } from "./types";
+import { getApiKeyDeps } from "@lib/deps";
 
-const repository = new ApiKeyRepository();
-const service = new ApiKeyService(repository);
+const deps = getApiKeyDeps();
+const service = deps.apiKeyService;
 
 interface CreateKeyData {
   value: string;
