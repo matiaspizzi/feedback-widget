@@ -95,72 +95,105 @@ export class FeedbackWidget extends HTMLElement {
     btn.textContent = this.isSubmitting ? "Sending..." : "Send Feedback";
   }
 
-  private setupEventListeners() {
-    if (!this.shadow) return;
-    this.shadow.querySelector(".fab")?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.toggleModal();
-    });
 
-    this.shadow
-      .querySelector(".close-btn")
-      ?.addEventListener("click", () => this.toggleModal());
-
-    if (!this.isSuccess) {
-      this.shadow
-        .querySelector("form")
-        ?.addEventListener("submit", (e) => this.handleSubmit(e));
-      this.shadow.querySelectorAll('input[name="rating"]').forEach((input) => {
-        input.addEventListener("change", (e) => {
-          this._rating = parseInt((e.target as HTMLInputElement).value);
-          this.updateSubmitButtonState();
-        });
-      });
-    }
-  }
 
   private render() {
     if (!this.shadow) return;
 
-    const content = this.isSuccess
-      ? `
+    // Initial render
+    if (!this.shadow.querySelector(".widget-container")) {
+      this.shadow.innerHTML = `
+      <style>${styles}</style>
+      <div class="widget-container">
+        <div class="modal">
+          <div class="content-wrapper"></div>
+        </div>
+        <button class="fab">★</button>
+      </div>
+    `;
+      this.setupGlobalListeners();
+    }
+
+    const modal = this.shadow.querySelector(".modal");
+    const fab = this.shadow.querySelector(".fab");
+    const contentWrapper = this.shadow.querySelector(".content-wrapper");
+
+    if (modal) {
+      if (this.isOpen) modal.classList.add("open");
+      else modal.classList.remove("open");
+    }
+
+    if (fab) {
+      fab.textContent = this.isOpen ? "×" : "★";
+    }
+
+    if (contentWrapper) {
+      contentWrapper.innerHTML = this.isSuccess
+        ? `
         <div class="success-message">
           <h3 class="title">Thank you!</h3>
           <p class="subtitle">Your feedback has been received.</p>
           <button class="close-btn" type="button">×</button>
         </div>
       `
-      : `
+        : `
         <button class="close-btn" type="button">×</button>
         <h3 class="title">Your Feedback</h3>
         <p class="subtitle">Tell us what you think!</p>
         <form>
           <div class="rating-group">
             ${[5, 4, 3, 2, 1]
-              .map(
-                (num) => `
+          .map(
+            (num) => `
               <input type="radio" id="st${num}" name="rating" value="${num}" ${this._rating === num ? "checked" : ""}>
               <label for="st${num}">★</label>
             `,
-              )
-              .join("")}
+          )
+          .join("")}
           </div>
           <textarea name="comment" rows="4" placeholder="Optional comments..."></textarea>
           <button type="submit" class="submit-btn" ${this._rating ? "" : "disabled"}>Send Feedback</button>
           <div class="error-message"></div>
         </form>
       `;
+      this.setupContentListeners();
+    }
+  }
 
-    this.shadow.innerHTML = `
-      <style>${styles}</style>
-      <div class="widget-container">
-        <div class="modal ${this.isOpen ? "open" : ""}">
-          ${content}
-        </div>
-        <button class="fab">${this.isOpen ? "×" : "★"}</button>
-      </div>
-    `;
-    this.setupEventListeners();
+  private setupGlobalListeners() {
+    this.shadow?.querySelector(".fab")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.toggleModal();
+    });
+  }
+
+  private setupContentListeners() {
+    const closeBtn = this.shadow?.querySelector(".close-btn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => this.toggleModal());
+    }
+
+    if (!this.isSuccess) {
+      const form = this.shadow?.querySelector("form");
+      if (form) {
+        form.addEventListener("submit", (e) => this.handleSubmit(e));
+      }
+
+      const ratingInputs = this.shadow?.querySelectorAll('input[name="rating"]');
+      ratingInputs?.forEach((input) => {
+        input.addEventListener("change", (e) => {
+          this._rating = parseInt((e.target as HTMLInputElement).value);
+          this.updateSubmitButtonState();
+        });
+      });
+
+      // Restore cached values if needed, or simply let the browser handle it since we are re-rendering the form
+      // Note: In a full VDOM impl we would diff, but here simplified conditional rendering is sufficient 
+      // as long as we don't re-render while typing.
+      // Current logic re-renders on every toggleModal(), which is fine.
+      // But we must ensuring _rating updates don't trigger full re-render if we want to keep focus.
+      // For this step, avoiding innerHTML = ... on unrelated state changes is the key.
+    }
   }
 }
 
