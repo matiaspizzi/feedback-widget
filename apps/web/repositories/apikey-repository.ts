@@ -1,7 +1,6 @@
 import { db, Prisma } from "@repo/database";
 import {
   UniqueConstraintError,
-  DatabaseError,
   NotFoundError,
   PRISMA_NOT_FOUND_ERROR,
   PRISMA_UNIQUE_KEY_ERROR,
@@ -9,37 +8,25 @@ import {
 
 export class ApiKeyRepository {
   async getById(id: string) {
-    try {
-      return await db.apiKey.findUnique({
-        where: { id },
-      });
-    } catch (error) {
-      throw new DatabaseError("Error retrieving API Key by ID");
-    }
+    return db.apiKey.findUnique({
+      where: { id },
+    });
   }
 
   async getByValue(value: string) {
-    try {
-      return await db.apiKey.findUnique({
-        where: { value },
-      });
-    } catch (error) {
-      throw new DatabaseError("Error retrieving API Key by value");
-    }
+    return db.apiKey.findUnique({
+      where: { value },
+    });
   }
 
   async getWithFilters(
     filter: Prisma.ApiKeyWhereInput,
     orderBy?: Prisma.ApiKeyOrderByWithRelationInput,
   ) {
-    try {
-      return await db.apiKey.findMany({
-        where: filter,
-        orderBy: orderBy || { createdAt: "desc" },
-      });
-    } catch (error) {
-      throw new DatabaseError("Error retrieving API Keys with filters");
-    }
+    return db.apiKey.findMany({
+      where: filter,
+      orderBy: orderBy || { createdAt: "desc" },
+    });
   }
 
   async getAllByUserId(userId: string) {
@@ -56,7 +43,7 @@ export class ApiKeyRepository {
       ) {
         throw new UniqueConstraintError("API Key", "name");
       }
-      throw new DatabaseError("Error creating API Key record");
+      throw error;
     }
   }
 
@@ -72,7 +59,7 @@ export class ApiKeyRepository {
       ) {
         throw new NotFoundError("API Key");
       }
-      throw new DatabaseError("Failed to delete API Key record");
+      throw error;
     }
   }
 }

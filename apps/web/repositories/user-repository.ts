@@ -1,29 +1,20 @@
 import { db, Prisma } from "@repo/database";
 import {
   UniqueConstraintError,
-  DatabaseError,
   PRISMA_UNIQUE_KEY_ERROR,
 } from "@lib/errors";
 
 export class UserRepository {
   async getById(id: string) {
-    try {
-      return await db.user.findUnique({
-        where: { id },
-      });
-    } catch (error) {
-      throw new DatabaseError("Error fetching user by ID");
-    }
+    return db.user.findUnique({
+      where: { id },
+    });
   }
 
   async getByEmail(email: string) {
-    try {
-      return await db.user.findUnique({
-        where: { email },
-      });
-    } catch (error) {
-      throw new DatabaseError("Error fetching user by email");
-    }
+    return db.user.findUnique({
+      where: { email },
+    });
   }
 
   async create(data: Prisma.UserCreateInput) {
@@ -38,7 +29,7 @@ export class UserRepository {
       ) {
         throw new UniqueConstraintError("User", "email");
       }
-      throw new DatabaseError("Failed to create user account record");
+      throw error;
     }
   }
 }
