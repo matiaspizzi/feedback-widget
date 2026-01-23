@@ -106,6 +106,7 @@ export class FeedbackSDK {
       throw new Error("Please wait before sending more feedback.");
     }
 
+    const isBrowser = typeof window !== "undefined";
     const payload: FeedbackPayload = {
       projectId: this.config.projectId,
       userId: this.userId,
@@ -113,8 +114,8 @@ export class FeedbackSDK {
       comment,
       timestamp: new Date().toISOString(),
       context: {
-        userAgent: navigator.userAgent,
-        url: window.location.href,
+        userAgent: isBrowser ? navigator.userAgent : "SSR",
+        url: isBrowser ? window.location.href : "",
       },
     };
 
