@@ -5,7 +5,6 @@ import {
 } from "@repositories";
 import { FeedbackService, UserService, ApiKeyService } from "@services";
 
-// Singleton instances
 const feedbackRepository = new FeedbackRepository();
 const apiKeyRepository = new ApiKeyRepository();
 const userRepository = new UserRepository();
